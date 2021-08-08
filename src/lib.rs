@@ -20,3 +20,5 @@
 
 mod parquet_format;
 pub use crate::parquet_format::*;
+
+pub mod thrift;

@@ -16,14 +16,15 @@
 # under the License.
 
 [package]
-name = "parquet-format"
-version = "4.0.0"
+name = "parquet-format-async-temp"
+version = "0.1.0"
 license = "Apache-2.0"
-description = "Apache Parquet Format - thrift definition and generated Rust file"
+description = "Temporary crate containing thrift library + parquet definitions compiled to support read+write async."
 authors = [
     "Chao Sun <sunchao@apache.org>",
     "Ivan Sadikov <ivan.sadikov@gmail.com>",
-    "Neville Dipale <nevilledips@gmail.com>"
+    "Neville Dipale <nevilledips@gmail.com>",
+    "Jorge Leitao <jorgecarleitao@gmail.com>",
 ]
 edition = "2018"
 
@@ -33,4 +34,8 @@ repository = "https://github.com/sunchao/parquet-format-rs"
 keywords = ["parquet", "hadoop"]
 
 [dependencies]
-thrift = {path = "../thrift/lib/rs" }
+byteorder = "1.3"
+integer-encoding = { version = "3.0", features = ["futures_async"] }
+ordered-float = "1.0"
+async-trait = {version = "0.1"}
+futures = {version = "0.3"}
