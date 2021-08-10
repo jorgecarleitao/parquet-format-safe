@@ -853,7 +853,7 @@ impl Statistics {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("Statistics");
     o_prot.write_struct_begin(&struct_ident).await?;
     if let Some(ref fld_var) = self.max {
@@ -961,7 +961,7 @@ impl StringType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("StringType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1031,7 +1031,7 @@ impl UUIDType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("UUIDType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1101,7 +1101,7 @@ impl MapType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("MapType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1171,7 +1171,7 @@ impl ListType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("ListType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1241,7 +1241,7 @@ impl EnumType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("EnumType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1311,7 +1311,7 @@ impl DateType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("DateType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1386,7 +1386,7 @@ impl NullType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("NullType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1503,7 +1503,7 @@ impl DecimalType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("DecimalType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("scale", TType::I32, 1)).await?;
@@ -1574,7 +1574,7 @@ impl MilliSeconds {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("MilliSeconds");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1644,7 +1644,7 @@ impl MicroSeconds {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("MicroSeconds");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -1714,7 +1714,7 @@ impl NanoSeconds {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("NanoSeconds");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -2012,7 +2012,7 @@ impl TimestampType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("TimestampType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1)).await?;
@@ -2126,7 +2126,7 @@ impl TimeType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("TimeType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1)).await?;
@@ -2242,7 +2242,7 @@ impl IntType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("IntType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("bitWidth", TType::I08, 1)).await?;
@@ -2315,7 +2315,7 @@ impl JsonType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("JsonType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -2388,7 +2388,7 @@ impl BsonType {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("BsonType");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -3111,7 +3111,7 @@ impl SchemaElement {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("SchemaElement");
     o_prot.write_struct_begin(&struct_ident).await?;
     if let Some(ref fld_var) = self.type_ {
@@ -3327,7 +3327,7 @@ impl DataPageHeader {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("DataPageHeader");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("num_values", TType::I32, 1)).await?;
@@ -3408,7 +3408,7 @@ impl IndexPageHeader {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("IndexPageHeader");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -3541,7 +3541,7 @@ impl DictionaryPageHeader {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("DictionaryPageHeader");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("num_values", TType::I32, 1)).await?;
@@ -3788,7 +3788,7 @@ impl DataPageHeaderV2 {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("DataPageHeaderV2");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("num_values", TType::I32, 1)).await?;
@@ -3881,7 +3881,7 @@ impl SplitBlockAlgorithm {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("SplitBlockAlgorithm");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -4088,7 +4088,7 @@ impl XxHash {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("XxHash");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -4294,7 +4294,7 @@ impl Uncompressed {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("Uncompressed");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -4584,7 +4584,7 @@ impl BloomFilterHeader {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("BloomFilterHeader");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("numBytes", TType::I32, 1)).await?;
@@ -4844,7 +4844,7 @@ impl PageHeader {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("PageHeader");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("type", TType::I32, 1)).await?;
@@ -4984,7 +4984,7 @@ impl KeyValue {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("KeyValue");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("key", TType::String, 1)).await?;
@@ -5121,7 +5121,7 @@ impl SortingColumn {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("SortingColumn");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("column_idx", TType::I32, 1)).await?;
@@ -5258,7 +5258,7 @@ impl PageEncodingStats {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("PageEncodingStats");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("page_type", TType::I32, 1)).await?;
@@ -5683,7 +5683,7 @@ impl ColumnMetaData {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("ColumnMetaData");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("type", TType::I32, 1)).await?;
@@ -5817,7 +5817,7 @@ impl EncryptionWithFooterKey {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("EncryptionWithFooterKey");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -5946,7 +5946,7 @@ impl EncryptionWithColumnKey {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("EncryptionWithColumnKey");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("path_in_schema", TType::List, 1)).await?;
@@ -6369,7 +6369,7 @@ impl ColumnChunk {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("ColumnChunk");
     o_prot.write_struct_begin(&struct_ident).await?;
     if let Some(ref fld_var) = self.file_path {
@@ -6656,7 +6656,7 @@ impl RowGroup {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("RowGroup");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("columns", TType::List, 1)).await?;
@@ -6758,7 +6758,7 @@ impl TypeDefinedOrder {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("TypeDefinedOrder");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_stop().await?;
@@ -7027,7 +7027,7 @@ impl PageLocation {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("PageLocation");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("offset", TType::I64, 1)).await?;
@@ -7140,7 +7140,7 @@ impl OffsetIndex {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("OffsetIndex");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("page_locations", TType::List, 1)).await?;
@@ -7392,7 +7392,7 @@ impl ColumnIndex {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("ColumnIndex");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("null_pages", TType::List, 1)).await?;
@@ -7553,7 +7553,7 @@ impl AesGcmV1 {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("AesGcmV1");
     o_prot.write_struct_begin(&struct_ident).await?;
     if let Some(ref fld_var) = self.aad_prefix {
@@ -7706,7 +7706,7 @@ impl AesGcmCtrV1 {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("AesGcmCtrV1");
     o_prot.write_struct_begin(&struct_ident).await?;
     if let Some(ref fld_var) = self.aad_prefix {
@@ -8223,7 +8223,7 @@ impl FileMetaData {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("FileMetaData");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("version", TType::I32, 1)).await?;
@@ -8387,7 +8387,7 @@ impl FileCryptoMetaData {
     o_prot.write_field_stop()?;
     o_prot.write_struct_end()
   }
-  async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
+  pub async fn write_to_out_stream_protocol(&self, o_prot: &mut dyn TOutputStreamProtocol) -> crate::thrift::Result<()> {
     let struct_ident = TStructIdentifier::new("FileCryptoMetaData");
     o_prot.write_struct_begin(&struct_ident).await?;
     o_prot.write_field_begin(&TFieldIdentifier::new("encryption_algorithm", TType::Struct, 1)).await?;
