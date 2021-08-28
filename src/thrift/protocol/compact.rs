@@ -380,33 +380,35 @@ where
     }
 
     // FIXME: field_type as unconstrained u8 is bad
-    fn write_field_header(&mut self, field_type: u8, field_id: i16) -> Result<()> {
+    fn write_field_header(&mut self, field_type: u8, field_id: i16) -> Result<usize> {
+        let mut written = 0;
+
         let field_delta = field_id - self.last_write_field_id;
         if field_delta > 0 && field_delta < 15 {
-            self.write_byte(((field_delta as u8) << 4) | field_type)?;
+            written += self.write_byte(((field_delta as u8) << 4) | field_type)?;
         } else {
-            self.write_byte(field_type)?;
-            self.write_i16(field_id)?;
+            written += self.write_byte(field_type)?;
+            written += self.write_i16(field_id)?;
         }
         self.last_write_field_id = field_id;
-        Ok(())
+        Ok(written)
     }
 
-    fn write_list_set_begin(&mut self, element_type: TType, element_count: i32) -> Result<()> {
+    fn write_list_set_begin(&mut self, element_type: TType, element_count: i32) -> Result<usize> {
+        let mut written = 0;
+
         let elem_identifier = collection_type_to_u8(element_type);
         if element_count <= 14 {
             let header = (element_count as u8) << 4 | elem_identifier;
-            self.write_byte(header)
+            written += self.write_byte(header)?;
         } else {
             let header = 0xF0 | elem_identifier;
-            self.write_byte(header)?;
+            written += self.write_byte(header)?;
             // element count is strictly positive as per the spec, so
             // cast i32 as u32 so that varint writing won't use zigzag encoding
-            self.transport
-                .write_varint(element_count as u32)
-                .map_err(From::from)
-                .map(|_| ())
+            written += self.transport.write_varint(element_count as u32)?;
         }
+        Ok(written)
     }
 
     fn assert_no_pending_bool_write(&self) {
@@ -420,37 +422,39 @@ impl<T> TOutputProtocol for TCompactOutputProtocol<T>
 where
     T: TWriteTransport,
 {
-    fn write_message_begin(&mut self, identifier: &TMessageIdentifier) -> Result<()> {
-        self.write_byte(COMPACT_PROTOCOL_ID)?;
-        self.write_byte((u8::from(identifier.message_type) << 5) | COMPACT_VERSION)?;
+    fn write_message_begin(&mut self, identifier: &TMessageIdentifier) -> Result<usize> {
+        let mut written = 0;
+        written += self.write_byte(COMPACT_PROTOCOL_ID)?;
+        written += self.write_byte((u8::from(identifier.message_type) << 5) | COMPACT_VERSION)?;
         // cast i32 as u32 so that varint writing won't use zigzag encoding
-        self.transport
+        written += self
+            .transport
             .write_varint(identifier.sequence_number as u32)?;
-        self.write_string(&identifier.name)?;
-        Ok(())
+        written += self.write_string(&identifier.name)?;
+        Ok(written)
     }
 
-    fn write_message_end(&mut self) -> Result<()> {
+    fn write_message_end(&mut self) -> Result<usize> {
         self.assert_no_pending_bool_write();
-        Ok(())
+        Ok(0)
     }
 
-    fn write_struct_begin(&mut self, _: &TStructIdentifier) -> Result<()> {
+    fn write_struct_begin(&mut self, _: &TStructIdentifier) -> Result<usize> {
         self.write_field_id_stack.push(self.last_write_field_id);
         self.last_write_field_id = 0;
-        Ok(())
+        Ok(0)
     }
 
-    fn write_struct_end(&mut self) -> Result<()> {
+    fn write_struct_end(&mut self) -> Result<usize> {
         self.assert_no_pending_bool_write();
         self.last_write_field_id = self
             .write_field_id_stack
             .pop()
             .expect("should have previous field ids");
-        Ok(())
+        Ok(0)
     }
 
-    fn write_field_begin(&mut self, identifier: &TFieldIdentifier) -> Result<()> {
+    fn write_field_begin(&mut self, identifier: &TFieldIdentifier) -> Result<usize> {
         match identifier.field_type {
             TType::Bool => {
                 if self.pending_write_bool_field_identifier.is_some() {
@@ -461,7 +465,7 @@ where
                     )
                 }
                 self.pending_write_bool_field_identifier = Some(identifier.clone());
-                Ok(())
+                Ok(0)
             }
             _ => {
                 let field_type = type_to_u8(identifier.field_type);
@@ -471,17 +475,17 @@ where
         }
     }
 
-    fn write_field_end(&mut self) -> Result<()> {
+    fn write_field_end(&mut self) -> Result<usize> {
         self.assert_no_pending_bool_write();
-        Ok(())
+        Ok(0)
     }
 
-    fn write_field_stop(&mut self) -> Result<()> {
+    fn write_field_stop(&mut self) -> Result<usize> {
         self.assert_no_pending_bool_write();
         self.write_byte(type_to_u8(TType::Stop))
     }
 
-    fn write_bool(&mut self, b: bool) -> Result<()> {
+    fn write_bool(&mut self, b: bool) -> Result<usize> {
         match self.pending_write_bool_field_identifier.take() {
             Some(pending) => {
                 let field_id = pending.id.expect("bool field should have a field id");
@@ -498,71 +502,65 @@ where
         }
     }
 
-    fn write_bytes(&mut self, b: &[u8]) -> Result<()> {
+    fn write_bytes(&mut self, b: &[u8]) -> Result<usize> {
+        let mut written = 0;
         // length is strictly positive as per the spec, so
         // cast i32 as u32 so that varint writing won't use zigzag encoding
-        self.transport.write_varint(b.len() as u32)?;
-        self.transport.write_all(b).map_err(From::from)
+        written += self.transport.write_varint(b.len() as u32)?;
+        self.transport.write_all(b)?;
+        written += b.len();
+        Ok(written)
     }
 
-    fn write_i8(&mut self, i: i8) -> Result<()> {
+    fn write_i8(&mut self, i: i8) -> Result<usize> {
         self.write_byte(i as u8)
     }
 
-    fn write_i16(&mut self, i: i16) -> Result<()> {
-        self.transport
-            .write_varint(i)
-            .map_err(From::from)
-            .map(|_| ())
+    fn write_i16(&mut self, i: i16) -> Result<usize> {
+        self.transport.write_varint(i).map_err(From::from)
     }
 
-    fn write_i32(&mut self, i: i32) -> Result<()> {
-        self.transport
-            .write_varint(i)
-            .map_err(From::from)
-            .map(|_| ())
+    fn write_i32(&mut self, i: i32) -> Result<usize> {
+        self.transport.write_varint(i).map_err(From::from)
     }
 
-    fn write_i64(&mut self, i: i64) -> Result<()> {
-        self.transport
-            .write_varint(i)
-            .map_err(From::from)
-            .map(|_| ())
+    fn write_i64(&mut self, i: i64) -> Result<usize> {
+        self.transport.write_varint(i).map_err(From::from)
     }
 
-    fn write_double(&mut self, d: f64) -> Result<()> {
-        self.transport
-            .write_f64::<LittleEndian>(d)
-            .map_err(From::from)
+    fn write_double(&mut self, d: f64) -> Result<usize> {
+        self.transport.write_f64::<LittleEndian>(d)?;
+        Ok(8)
     }
 
-    fn write_string(&mut self, s: &str) -> Result<()> {
+    fn write_string(&mut self, s: &str) -> Result<usize> {
         self.write_bytes(s.as_bytes())
     }
 
-    fn write_list_begin(&mut self, identifier: &TListIdentifier) -> Result<()> {
+    fn write_list_begin(&mut self, identifier: &TListIdentifier) -> Result<usize> {
         self.write_list_set_begin(identifier.element_type, identifier.size)
     }
 
-    fn write_list_end(&mut self) -> Result<()> {
-        Ok(())
+    fn write_list_end(&mut self) -> Result<usize> {
+        Ok(0)
     }
 
-    fn write_set_begin(&mut self, identifier: &TSetIdentifier) -> Result<()> {
+    fn write_set_begin(&mut self, identifier: &TSetIdentifier) -> Result<usize> {
         self.write_list_set_begin(identifier.element_type, identifier.size)
     }
 
-    fn write_set_end(&mut self) -> Result<()> {
-        Ok(())
+    fn write_set_end(&mut self) -> Result<usize> {
+        Ok(0)
     }
 
-    fn write_map_begin(&mut self, identifier: &TMapIdentifier) -> Result<()> {
+    fn write_map_begin(&mut self, identifier: &TMapIdentifier) -> Result<usize> {
         if identifier.size == 0 {
             self.write_byte(0)
         } else {
+            let mut written = 0;
             // element count is strictly positive as per the spec, so
             // cast i32 as u32 so that varint writing won't use zigzag encoding
-            self.transport.write_varint(identifier.size as u32)?;
+            written += self.transport.write_varint(identifier.size as u32)?;
 
             let key_type = identifier
                 .key_type
@@ -575,12 +573,13 @@ where
             let val_type_byte = collection_type_to_u8(val_type);
 
             let map_type_header = key_type_byte | val_type_byte;
-            self.write_byte(map_type_header)
+            written += self.write_byte(map_type_header)?;
+            Ok(written)
         }
     }
 
-    fn write_map_end(&mut self) -> Result<()> {
-        Ok(())
+    fn write_map_end(&mut self) -> Result<usize> {
+        Ok(0)
     }
 
     fn flush(&mut self) -> Result<()> {
@@ -590,8 +589,8 @@ where
     // utility
     //
 
-    fn write_byte(&mut self, b: u8) -> Result<()> {
-        self.transport.write(&[b]).map_err(From::from).map(|_| ())
+    fn write_byte(&mut self, b: u8) -> Result<usize> {
+        self.transport.write(&[b]).map_err(From::from)
     }
 }
 

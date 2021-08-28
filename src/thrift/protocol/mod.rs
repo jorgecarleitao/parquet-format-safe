@@ -263,49 +263,54 @@ pub trait TInputProtocol {
 /// ```
 pub trait TOutputProtocol {
     /// Write the beginning of a Thrift message.
-    fn write_message_begin(&mut self, identifier: &TMessageIdentifier)
-        -> crate::thrift::Result<()>;
+    fn write_message_begin(
+        &mut self,
+        identifier: &TMessageIdentifier,
+    ) -> crate::thrift::Result<usize>;
     /// Write the end of a Thrift message.
-    fn write_message_end(&mut self) -> crate::thrift::Result<()>;
+    fn write_message_end(&mut self) -> crate::thrift::Result<usize>;
     /// Write the beginning of a Thrift struct.
-    fn write_struct_begin(&mut self, identifier: &TStructIdentifier) -> crate::thrift::Result<()>;
+    fn write_struct_begin(
+        &mut self,
+        identifier: &TStructIdentifier,
+    ) -> crate::thrift::Result<usize>;
     /// Write the end of a Thrift struct.
-    fn write_struct_end(&mut self) -> crate::thrift::Result<()>;
+    fn write_struct_end(&mut self) -> crate::thrift::Result<usize>;
     /// Write the beginning of a Thrift field.
-    fn write_field_begin(&mut self, identifier: &TFieldIdentifier) -> crate::thrift::Result<()>;
+    fn write_field_begin(&mut self, identifier: &TFieldIdentifier) -> crate::thrift::Result<usize>;
     /// Write the end of a Thrift field.
-    fn write_field_end(&mut self) -> crate::thrift::Result<()>;
+    fn write_field_end(&mut self) -> crate::thrift::Result<usize>;
     /// Write a STOP field indicating that all the fields in a struct have been
     /// written.
-    fn write_field_stop(&mut self) -> crate::thrift::Result<()>;
+    fn write_field_stop(&mut self) -> crate::thrift::Result<usize>;
     /// Write a bool.
-    fn write_bool(&mut self, b: bool) -> crate::thrift::Result<()>;
+    fn write_bool(&mut self, b: bool) -> crate::thrift::Result<usize>;
     /// Write a fixed-length byte array.
-    fn write_bytes(&mut self, b: &[u8]) -> crate::thrift::Result<()>;
+    fn write_bytes(&mut self, b: &[u8]) -> crate::thrift::Result<usize>;
     /// Write an 8-bit signed integer.
-    fn write_i8(&mut self, i: i8) -> crate::thrift::Result<()>;
+    fn write_i8(&mut self, i: i8) -> crate::thrift::Result<usize>;
     /// Write a 16-bit signed integer.
-    fn write_i16(&mut self, i: i16) -> crate::thrift::Result<()>;
+    fn write_i16(&mut self, i: i16) -> crate::thrift::Result<usize>;
     /// Write a 32-bit signed integer.
-    fn write_i32(&mut self, i: i32) -> crate::thrift::Result<()>;
+    fn write_i32(&mut self, i: i32) -> crate::thrift::Result<usize>;
     /// Write a 64-bit signed integer.
-    fn write_i64(&mut self, i: i64) -> crate::thrift::Result<()>;
+    fn write_i64(&mut self, i: i64) -> crate::thrift::Result<usize>;
     /// Write a 64-bit float.
-    fn write_double(&mut self, d: f64) -> crate::thrift::Result<()>;
+    fn write_double(&mut self, d: f64) -> crate::thrift::Result<usize>;
     /// Write a fixed-length string.
-    fn write_string(&mut self, s: &str) -> crate::thrift::Result<()>;
+    fn write_string(&mut self, s: &str) -> crate::thrift::Result<usize>;
     /// Write the beginning of a list.
-    fn write_list_begin(&mut self, identifier: &TListIdentifier) -> crate::thrift::Result<()>;
+    fn write_list_begin(&mut self, identifier: &TListIdentifier) -> crate::thrift::Result<usize>;
     /// Write the end of a list.
-    fn write_list_end(&mut self) -> crate::thrift::Result<()>;
+    fn write_list_end(&mut self) -> crate::thrift::Result<usize>;
     /// Write the beginning of a set.
-    fn write_set_begin(&mut self, identifier: &TSetIdentifier) -> crate::thrift::Result<()>;
+    fn write_set_begin(&mut self, identifier: &TSetIdentifier) -> crate::thrift::Result<usize>;
     /// Write the end of a set.
-    fn write_set_end(&mut self) -> crate::thrift::Result<()>;
+    fn write_set_end(&mut self) -> crate::thrift::Result<usize>;
     /// Write the beginning of a map.
-    fn write_map_begin(&mut self, identifier: &TMapIdentifier) -> crate::thrift::Result<()>;
+    fn write_map_begin(&mut self, identifier: &TMapIdentifier) -> crate::thrift::Result<usize>;
     /// Write the end of a map.
-    fn write_map_end(&mut self) -> crate::thrift::Result<()>;
+    fn write_map_end(&mut self) -> crate::thrift::Result<usize>;
     /// Flush buffered bytes to the underlying transport.
     fn flush(&mut self) -> crate::thrift::Result<()>;
 
@@ -315,7 +320,7 @@ pub trait TOutputProtocol {
     /// Write an unsigned byte.
     ///
     /// This method should **never** be used in generated code.
-    fn write_byte(&mut self, b: u8) -> crate::thrift::Result<()>; // FIXME: REMOVE
+    fn write_byte(&mut self, b: u8) -> crate::thrift::Result<usize>; // FIXME: REMOVE
 }
 
 impl<P> TInputProtocol for Box<P>
@@ -414,87 +419,90 @@ where
     fn write_message_begin(
         &mut self,
         identifier: &TMessageIdentifier,
-    ) -> crate::thrift::Result<()> {
+    ) -> crate::thrift::Result<usize> {
         (**self).write_message_begin(identifier)
     }
 
-    fn write_message_end(&mut self) -> crate::thrift::Result<()> {
+    fn write_message_end(&mut self) -> crate::thrift::Result<usize> {
         (**self).write_message_end()
     }
 
-    fn write_struct_begin(&mut self, identifier: &TStructIdentifier) -> crate::thrift::Result<()> {
+    fn write_struct_begin(
+        &mut self,
+        identifier: &TStructIdentifier,
+    ) -> crate::thrift::Result<usize> {
         (**self).write_struct_begin(identifier)
     }
 
-    fn write_struct_end(&mut self) -> crate::thrift::Result<()> {
+    fn write_struct_end(&mut self) -> crate::thrift::Result<usize> {
         (**self).write_struct_end()
     }
 
-    fn write_field_begin(&mut self, identifier: &TFieldIdentifier) -> crate::thrift::Result<()> {
+    fn write_field_begin(&mut self, identifier: &TFieldIdentifier) -> crate::thrift::Result<usize> {
         (**self).write_field_begin(identifier)
     }
 
-    fn write_field_end(&mut self) -> crate::thrift::Result<()> {
+    fn write_field_end(&mut self) -> crate::thrift::Result<usize> {
         (**self).write_field_end()
     }
 
-    fn write_field_stop(&mut self) -> crate::thrift::Result<()> {
+    fn write_field_stop(&mut self) -> crate::thrift::Result<usize> {
         (**self).write_field_stop()
     }
 
-    fn write_bool(&mut self, b: bool) -> crate::thrift::Result<()> {
+    fn write_bool(&mut self, b: bool) -> crate::thrift::Result<usize> {
         (**self).write_bool(b)
     }
 
-    fn write_bytes(&mut self, b: &[u8]) -> crate::thrift::Result<()> {
+    fn write_bytes(&mut self, b: &[u8]) -> crate::thrift::Result<usize> {
         (**self).write_bytes(b)
     }
 
-    fn write_i8(&mut self, i: i8) -> crate::thrift::Result<()> {
+    fn write_i8(&mut self, i: i8) -> crate::thrift::Result<usize> {
         (**self).write_i8(i)
     }
 
-    fn write_i16(&mut self, i: i16) -> crate::thrift::Result<()> {
+    fn write_i16(&mut self, i: i16) -> crate::thrift::Result<usize> {
         (**self).write_i16(i)
     }
 
-    fn write_i32(&mut self, i: i32) -> crate::thrift::Result<()> {
+    fn write_i32(&mut self, i: i32) -> crate::thrift::Result<usize> {
         (**self).write_i32(i)
     }
 
-    fn write_i64(&mut self, i: i64) -> crate::thrift::Result<()> {
+    fn write_i64(&mut self, i: i64) -> crate::thrift::Result<usize> {
         (**self).write_i64(i)
     }
 
-    fn write_double(&mut self, d: f64) -> crate::thrift::Result<()> {
+    fn write_double(&mut self, d: f64) -> crate::thrift::Result<usize> {
         (**self).write_double(d)
     }
 
-    fn write_string(&mut self, s: &str) -> crate::thrift::Result<()> {
+    fn write_string(&mut self, s: &str) -> crate::thrift::Result<usize> {
         (**self).write_string(s)
     }
 
-    fn write_list_begin(&mut self, identifier: &TListIdentifier) -> crate::thrift::Result<()> {
+    fn write_list_begin(&mut self, identifier: &TListIdentifier) -> crate::thrift::Result<usize> {
         (**self).write_list_begin(identifier)
     }
 
-    fn write_list_end(&mut self) -> crate::thrift::Result<()> {
+    fn write_list_end(&mut self) -> crate::thrift::Result<usize> {
         (**self).write_list_end()
     }
 
-    fn write_set_begin(&mut self, identifier: &TSetIdentifier) -> crate::thrift::Result<()> {
+    fn write_set_begin(&mut self, identifier: &TSetIdentifier) -> crate::thrift::Result<usize> {
         (**self).write_set_begin(identifier)
     }
 
-    fn write_set_end(&mut self) -> crate::thrift::Result<()> {
+    fn write_set_end(&mut self) -> crate::thrift::Result<usize> {
         (**self).write_set_end()
     }
 
-    fn write_map_begin(&mut self, identifier: &TMapIdentifier) -> crate::thrift::Result<()> {
+    fn write_map_begin(&mut self, identifier: &TMapIdentifier) -> crate::thrift::Result<usize> {
         (**self).write_map_begin(identifier)
     }
 
-    fn write_map_end(&mut self) -> crate::thrift::Result<()> {
+    fn write_map_end(&mut self) -> crate::thrift::Result<usize> {
         (**self).write_map_end()
     }
 
@@ -502,7 +510,7 @@ where
         (**self).flush()
     }
 
-    fn write_byte(&mut self, b: u8) -> crate::thrift::Result<()> {
+    fn write_byte(&mut self, b: u8) -> crate::thrift::Result<usize> {
         (**self).write_byte(b)
     }
 }

@@ -148,48 +148,48 @@ pub trait TInputStreamProtocol: Send {
 #[async_trait]
 pub trait TOutputStreamProtocol: Send {
     /// Write the beginning of a Thrift message.
-    async fn write_message_begin(&mut self, identifier: &TMessageIdentifier) -> Result<()>;
+    async fn write_message_begin(&mut self, identifier: &TMessageIdentifier) -> Result<usize>;
     /// Write the end of a Thrift message.
-    async fn write_message_end(&mut self) -> Result<()>;
+    async fn write_message_end(&mut self) -> Result<usize>;
     /// Write the beginning of a Thrift struct.
-    async fn write_struct_begin(&mut self, identifier: &TStructIdentifier) -> Result<()>;
+    async fn write_struct_begin(&mut self, identifier: &TStructIdentifier) -> Result<usize>;
     /// Write the end of a Thrift struct.
-    fn write_struct_end(&mut self) -> Result<()>;
+    fn write_struct_end(&mut self) -> Result<usize>;
     /// Write the beginning of a Thrift field.
-    async fn write_field_begin(&mut self, identifier: &TFieldIdentifier) -> Result<()>;
+    async fn write_field_begin(&mut self, identifier: &TFieldIdentifier) -> Result<usize>;
     /// Write the end of a Thrift field.
-    fn write_field_end(&mut self) -> Result<()>;
+    fn write_field_end(&mut self) -> Result<usize>;
     /// Write a STOP field indicating that all the fields in a struct have been
     /// written.
-    async fn write_field_stop(&mut self) -> Result<()>;
+    async fn write_field_stop(&mut self) -> Result<usize>;
     /// Write a bool.
-    async fn write_bool(&mut self, b: bool) -> Result<()>;
+    async fn write_bool(&mut self, b: bool) -> Result<usize>;
     /// Write a fixed-length byte array.
-    async fn write_bytes(&mut self, b: &[u8]) -> Result<()>;
+    async fn write_bytes(&mut self, b: &[u8]) -> Result<usize>;
     /// Write an 8-bit signed integer.
-    async fn write_i8(&mut self, i: i8) -> Result<()>;
+    async fn write_i8(&mut self, i: i8) -> Result<usize>;
     /// Write a 16-bit signed integer.
-    async fn write_i16(&mut self, i: i16) -> Result<()>;
+    async fn write_i16(&mut self, i: i16) -> Result<usize>;
     /// Write a 32-bit signed integer.
-    async fn write_i32(&mut self, i: i32) -> Result<()>;
+    async fn write_i32(&mut self, i: i32) -> Result<usize>;
     /// Write a 64-bit signed integer.
-    async fn write_i64(&mut self, i: i64) -> Result<()>;
+    async fn write_i64(&mut self, i: i64) -> Result<usize>;
     /// Write a 64-bit float.
-    async fn write_double(&mut self, d: f64) -> Result<()>;
+    async fn write_double(&mut self, d: f64) -> Result<usize>;
     /// Write a fixed-length string.
-    async fn write_string(&mut self, s: &str) -> Result<()>;
+    async fn write_string(&mut self, s: &str) -> Result<usize>;
     /// Write the beginning of a list.
-    async fn write_list_begin(&mut self, identifier: &TListIdentifier) -> Result<()>;
+    async fn write_list_begin(&mut self, identifier: &TListIdentifier) -> Result<usize>;
     /// Write the end of a list.
-    async fn write_list_end(&mut self) -> Result<()>;
+    async fn write_list_end(&mut self) -> Result<usize>;
     /// Write the beginning of a set.
-    async fn write_set_begin(&mut self, identifier: &TSetIdentifier) -> Result<()>;
+    async fn write_set_begin(&mut self, identifier: &TSetIdentifier) -> Result<usize>;
     /// Write the end of a set.
-    async fn write_set_end(&mut self) -> Result<()>;
+    async fn write_set_end(&mut self) -> Result<usize>;
     /// Write the beginning of a map.
-    async fn write_map_begin(&mut self, identifier: &TMapIdentifier) -> Result<()>;
+    async fn write_map_begin(&mut self, identifier: &TMapIdentifier) -> Result<usize>;
     /// Write the end of a map.
-    async fn write_map_end(&mut self) -> Result<()>;
+    async fn write_map_end(&mut self) -> Result<usize>;
     /// Flush buffered bytes to the underlying transport.
     async fn flush(&mut self) -> Result<()>;
 
@@ -199,5 +199,5 @@ pub trait TOutputStreamProtocol: Send {
     /// Write an unsigned byte.
     ///
     /// This method should **never** be used in generated code.
-    async fn write_byte(&mut self, b: u8) -> Result<()>; // FIXME: REMOVE
+    async fn write_byte(&mut self, b: u8) -> Result<usize>; // FIXME: REMOVE
 }
