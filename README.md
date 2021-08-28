@@ -1,30 +1,26 @@
-# parquet-format-rs
+# parquet-format-async-temp
 
-[![Build Status](https://travis-ci.org/sunchao/parquet-format-rs.svg?branch=master)](https://travis-ci.org/sunchao/parquet-format-rs)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![](http://meritbadge.herokuapp.com/parquet-format)](https://crates.io/crates/parquet-format)
+This is a temporary crate containing a subset of rust's thirft library and parquet
+to support native async parquet read and write.
 
-Apache Parquet format for Rust, hosting the Thrift definition file and the generated .rs file.
+Specifically, it:
 
-## Usage and Versioning Policy
+* supports `async` read API (via `futures`)
+* supports `async` write API (via `futures`)
+* the write API returns the number of written bytes
 
-This crate previously tracked the Parquet format versions, which made keeping semver guarantees sometimes challenging.
-As of version `3.0.0` of the crate, independent major versions are used whenever we update the Parquet format.
+It must be used with the fork of thrift's compiler available
+at https://github.com/jorgecarleitao/thrift/tree/write_size .
 
-The below summarises the version mappings.
+## Why
 
-| parquet-format | parquet-format-rs |
-| -------------- | ----------------- |
-| 2.8.0          | 4.0.*             |
-| 2.7.0          | 3.0.*             |
-| 2.6.0          | 2.6.*             |
-| 2.5.0          | 2.5.*             |
-| 2.4.0          | 2.4.*             |
+To read and write files with thrift (e.g. parquet) without commiting to a
+particular runtime (e.g. tokio, hyper, etc.), the protocol needs to support
+`AsyncRead + AsyncSeek` and `AsyncWrite` respectively.
 
+To not require `Seek` and `AsyncSeek` on write, the protocol must
+return the number of written bytes on its `write_*` API.
 
-## Updating Parquet format
-- Update the `parquet.thrift` file
-- Run `./generate_parquet_format.sh`
-- Commit changes
-
-Note that the major version should be incremented when updating to a new Parquet format version.
+This crate addresses these two concerns for parquet. It is essentially:
+* https://github.com/apache/thrift/pull/2426 applied on latest thrift
+* a modification for the written bytes to be outputed on all `write_*` APIs
