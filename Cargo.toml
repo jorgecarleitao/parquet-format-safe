@@ -29,8 +29,8 @@ authors = [
 edition = "2018"
 
 readme = "README.md"
-homepage = "https://github.com/sunchao/parquet-format-rs"
-repository = "https://github.com/sunchao/parquet-format-rs"
+homepage = "https://github.com/jorgecarleitao/parquet-format-rs"
+repository = "https://github.com/jorgecarleitao/parquet-format-rs"
 keywords = ["parquet", "hadoop"]
 
 [dependencies]
