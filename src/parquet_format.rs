@@ -103,9 +103,10 @@ impl From<&Type> for i32 {
   }
 }
 
-/// Common types used by frameworks(e.g. hive, pig) using parquet.  This helps map
-/// between types in those frameworks to the base types in parquet.  This is only
-/// metadata and not needed to read or write the data.
+/// DEPRECATED: Common types used by frameworks(e.g. hive, pig) using parquet.
+/// ConvertedType is superseded by LogicalType.  This enum should not be extended.
+/// 
+/// See LogicalTypes.md for conversion between ConvertedType and LogicalType.
 #[derive(Copy, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ConvertedType(pub i32);
 
@@ -464,10 +465,11 @@ impl From<&Encoding> for i32 {
 
 /// Supported compression algorithms.
 /// 
-/// Codecs added in 2.4 can be read by readers based on 2.4 and later.
+/// Codecs added in format version X.Y can be read by readers based on X.Y and later.
 /// Codec support may vary between readers based on the format version and
-/// libraries available at runtime. Gzip, Snappy, and LZ4 codecs are
-/// widely available, while Zstd and Brotli require additional libraries.
+/// libraries available at runtime.
+/// 
+/// See Compression.md for a detailed specification of these algorithms.
 #[derive(Copy, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct CompressionCodec(pub i32);
 
@@ -479,6 +481,7 @@ impl CompressionCodec {
   pub const BROTLI: CompressionCodec = CompressionCodec(4);
   pub const LZ4: CompressionCodec = CompressionCodec(5);
   pub const ZSTD: CompressionCodec = CompressionCodec(6);
+  pub const LZ4_RAW: CompressionCodec = CompressionCodec(7);
   pub const ENUM_VALUES: &'static [Self] = &[
     Self::UNCOMPRESSED,
     Self::SNAPPY,
@@ -487,6 +490,7 @@ impl CompressionCodec {
     Self::BROTLI,
     Self::LZ4,
     Self::ZSTD,
+    Self::LZ4_RAW,
   ];
   #[allow(clippy::trivially_copy_pass_by_ref)]
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
@@ -516,6 +520,7 @@ impl From<i32> for CompressionCodec {
       4 => CompressionCodec::BROTLI,
       5 => CompressionCodec::LZ4,
       6 => CompressionCodec::ZSTD,
+      7 => CompressionCodec::LZ4_RAW,
       _ => CompressionCodec(i)
     }
   }
@@ -2936,11 +2941,15 @@ pub struct SchemaElement {
   /// The children count is used to construct the nested relationship.
   /// This field is not set when the element is a primitive type
   pub num_children: Option<i32>,
-  /// When the schema is the result of a conversion from another model
+  /// DEPRECATED: When the schema is the result of a conversion from another model.
   /// Used to record the original type to help with cross conversion.
+  /// 
+  /// This is superseded by logicalType.
   pub converted_type: Option<ConvertedType>,
-  /// Used when this column contains decimal data.
+  /// DEPRECATED: Used when this column contains decimal data.
   /// See the DECIMAL converted type for more details.
+  /// 
+  /// This is superseded by using the DecimalType annotation in logicalType.
   pub scale: Option<i32>,
   pub precision: Option<i32>,
   /// When the original schema supports field ids, this will save the
@@ -3511,6 +3520,10 @@ impl Default for IndexPageHeader {
 // DictionaryPageHeader
 //
 
+/// The dictionary page must be placed at the first position of the column chunk
+/// if it is partly or completely dictionary encoded. At most one dictionary page
+/// can be placed in a column chunk.
+/// 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct DictionaryPageHeader {
   /// Number of values in the dictionary *
@@ -7336,13 +7349,14 @@ pub struct ColumnIndex {
   /// byte[0], so that all lists have the same length. If false, the
   /// corresponding entries in min_values and max_values must be valid.
   pub null_pages: Vec<bool>,
-  /// Two lists containing lower and upper bounds for the values of each page.
-  /// These may be the actual minimum and maximum values found on a page, but
-  /// can also be (more compact) values that do not exist on a page. For
-  /// example, instead of storing ""Blart Versenwald III", a writer may set
-  /// min_values[i]="B", max_values[i]="C". Such more compact values must still
-  /// be valid values within the column's logical type. Readers must make sure
-  /// that list entries are populated before using them by inspecting null_pages.
+  /// Two lists containing lower and upper bounds for the values of each page
+  /// determined by the ColumnOrder of the column. These may be the actual
+  /// minimum and maximum values found on a page, but can also be (more compact)
+  /// values that do not exist on a page. For example, instead of storing ""Blart
+  /// Versenwald III", a writer may set min_values[i]="B", max_values[i]="C".
+  /// Such more compact values must still be valid values within the column's
+  /// logical type. Readers must make sure that list entries are populated before
+  /// using them by inspecting null_pages.
   pub min_values: Vec<Vec<u8>>,
   pub max_values: Vec<Vec<u8>>,
   /// Stores whether both min_values and max_values are orderd and if so, in
@@ -8106,17 +8120,20 @@ pub struct FileMetaData {
   /// e.g. impala version 1.0 (build 6cf94d29b2b7115df4de2c06e2ab4326d721eb55)
   /// 
   pub created_by: Option<String>,
-  /// Sort order used for the min_value and max_value fields of each column in
-  /// this file. Sort orders are listed in the order matching the columns in the
-  /// schema. The indexes are not necessary the same though, because only leaf
-  /// nodes of the schema are represented in the list of sort orders.
+  /// Sort order used for the min_value and max_value fields in the Statistics
+  /// objects and the min_values and max_values fields in the ColumnIndex
+  /// objects of each column in this file. Sort orders are listed in the order
+  /// matching the columns in the schema. The indexes are not necessary the same
+  /// though, because only leaf nodes of the schema are represented in the list
+  /// of sort orders.
   /// 
-  /// Without column_orders, the meaning of the min_value and max_value fields is
-  /// undefined. To ensure well-defined behaviour, if min_value and max_value are
-  /// written to a Parquet file, column_orders must be written as well.
+  /// Without column_orders, the meaning of the min_value and max_value fields
+  /// in the Statistics object and the ColumnIndex object is undefined. To ensure
+  /// well-defined behaviour, if these fields are written to a Parquet file,
+  /// column_orders must be written as well.
   /// 
-  /// The obsolete min and max fields are always sorted by signed comparison
-  /// regardless of column_orders.
+  /// The obsolete min and max fields in the Statistics object are always sorted
+  /// by signed comparison regardless of column_orders.
   pub column_orders: Option<Vec<ColumnOrder>>,
   /// Encryption algorithm. This field is set only in encrypted files
   /// with plaintext footer. Files with encrypted footer store algorithm id
