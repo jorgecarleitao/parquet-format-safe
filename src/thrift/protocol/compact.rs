@@ -14,11 +14,10 @@
 // KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use integer_encoding::{VarIntReader, VarIntWriter};
 use std::convert::{From, TryFrom};
 use std::io;
+
+use integer_encoding::{VarIntReader, VarIntWriter};
 
 use super::super::transport::{TReadTransport, TWriteTransport};
 use super::super::{Error, ProtocolError, ProtocolErrorKind, Result};
@@ -249,9 +248,9 @@ where
     }
 
     fn read_double(&mut self) -> Result<f64> {
-        self.transport
-            .read_f64::<LittleEndian>()
-            .map_err(From::from)
+        let mut data = [0u8; 8];
+        self.transport.read_exact(&mut data)?;
+        Ok(f64::from_le_bytes(data))
     }
 
     fn read_string(&mut self) -> Result<String> {
@@ -529,7 +528,8 @@ where
     }
 
     fn write_double(&mut self, d: f64) -> Result<usize> {
-        self.transport.write_f64::<LittleEndian>(d)?;
+        let bytes = d.to_le_bytes();
+        self.transport.write_all(&bytes)?;
         Ok(8)
     }
 
