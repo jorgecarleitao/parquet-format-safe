@@ -5,10 +5,6 @@ pub use errors::*;
 
 pub mod transport;
 
-// Re-export ordered-float, since it is used by the generator
-// FIXME: check the guidance around type reexports
-pub use ordered_float::OrderedFloat;
-
 /// Result type returned by all runtime library functions.
 ///
 /// As is convention this is a typedef of `std::result::Result`

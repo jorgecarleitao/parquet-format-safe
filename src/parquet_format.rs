@@ -17,7 +17,6 @@ use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::rc::Rc;
 
-use crate::thrift::OrderedFloat;
 use crate::thrift::{ApplicationError, ApplicationErrorKind, ProtocolError, ProtocolErrorKind};
 use crate::thrift::protocol::{TFieldIdentifier, TListIdentifier, TMapIdentifier, TMessageIdentifier, TMessageType, TInputProtocol, TInputStreamProtocol, TOutputProtocol, TOutputStreamProtocol, TSetIdentifier, TStructIdentifier, TType};
 use crate::thrift::protocol::field_id;
