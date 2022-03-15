@@ -3,8 +3,6 @@ pub mod protocol;
 mod errors;
 pub use errors::*;
 
-pub mod transport;
-
 /// Result type returned by all runtime library functions.
 ///
 /// As is convention this is a typedef of `std::result::Result`

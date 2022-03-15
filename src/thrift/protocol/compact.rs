@@ -16,10 +16,10 @@
 // under the License.
 use std::convert::{From, TryFrom};
 use std::io;
+use std::io::{Read, Write};
 
 use integer_encoding::{VarIntReader, VarIntWriter};
 
-use super::super::transport::{TReadTransport, TWriteTransport};
 use super::super::{Error, ProtocolError, ProtocolErrorKind, Result};
 use super::{
     TFieldIdentifier, TInputProtocol, TInputProtocolFactory, TListIdentifier, TMapIdentifier,
@@ -52,7 +52,7 @@ pub(super) const COMPACT_VERSION_MASK: u8 = 0x1F;
 #[derive(Debug)]
 pub struct TCompactInputProtocol<T>
 where
-    T: TReadTransport,
+    T: Read,
 {
     // Identifier of the last field deserialized for a struct.
     last_read_field_id: i16,
@@ -68,7 +68,7 @@ where
 
 impl<T> TCompactInputProtocol<T>
 where
-    T: TReadTransport,
+    T: Read,
 {
     /// Create a `TCompactInputProtocol` that reads bytes from `transport`.
     pub fn new(transport: T) -> TCompactInputProtocol<T> {
@@ -84,14 +84,13 @@ where
         let header = self.read_byte()?;
         let element_type = collection_u8_to_type(header & 0x0F)?;
 
-        let element_count;
         let possible_element_count = (header & 0xF0) >> 4;
-        if possible_element_count != 15 {
+        let element_count = if possible_element_count != 15 {
             // high bits set high if count and type encoded separately
-            element_count = possible_element_count as i32;
+            possible_element_count as i32
         } else {
-            element_count = self.transport.read_varint::<u32>()? as i32;
-        }
+            self.transport.read_varint::<u32>()? as i32
+        };
 
         Ok((element_type, element_count))
     }
@@ -99,7 +98,7 @@ where
 
 impl<T> TInputProtocol for TCompactInputProtocol<T>
 where
-    T: TReadTransport,
+    T: Read,
 {
     fn read_message_begin(&mut self) -> Result<TMessageIdentifier> {
         let compact_id = self.read_byte()?;
@@ -306,7 +305,7 @@ where
 
 impl<T> io::Seek for TCompactInputProtocol<T>
 where
-    T: io::Seek + TReadTransport,
+    T: io::Seek + Read,
 {
     fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> {
         self.transport.seek(pos)
@@ -325,7 +324,7 @@ impl TCompactInputProtocolFactory {
 }
 
 impl TInputProtocolFactory for TCompactInputProtocolFactory {
-    fn create(&self, transport: Box<dyn TReadTransport + Send>) -> Box<dyn TInputProtocol + Send> {
+    fn create(&self, transport: Box<dyn Read + Send>) -> Box<dyn TInputProtocol + Send> {
         Box::new(TCompactInputProtocol::new(transport))
     }
 }
@@ -351,7 +350,7 @@ impl TInputProtocolFactory for TCompactInputProtocolFactory {
 #[derive(Debug)]
 pub struct TCompactOutputProtocol<T>
 where
-    T: TWriteTransport,
+    T: Write,
 {
     // Identifier of the last field serialized for a struct.
     last_write_field_id: i16,
@@ -366,7 +365,7 @@ where
 
 impl<T> TCompactOutputProtocol<T>
 where
-    T: TWriteTransport,
+    T: Write,
 {
     /// Create a `TCompactOutputProtocol` that writes bytes to `transport`.
     pub fn new(transport: T) -> TCompactOutputProtocol<T> {
@@ -419,7 +418,7 @@ where
 
 impl<T> TOutputProtocol for TCompactOutputProtocol<T>
 where
-    T: TWriteTransport,
+    T: Write,
 {
     fn write_message_begin(&mut self, identifier: &TMessageIdentifier) -> Result<usize> {
         let mut written = 0;
@@ -606,10 +605,7 @@ impl TCompactOutputProtocolFactory {
 }
 
 impl TOutputProtocolFactory for TCompactOutputProtocolFactory {
-    fn create(
-        &self,
-        transport: Box<dyn TWriteTransport + Send>,
-    ) -> Box<dyn TOutputProtocol + Send> {
+    fn create(&self, transport: Box<dyn Write + Send>) -> Box<dyn TOutputProtocol + Send> {
         Box::new(TCompactOutputProtocol::new(transport))
     }
 }

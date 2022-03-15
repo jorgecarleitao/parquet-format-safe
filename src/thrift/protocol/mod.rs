@@ -60,6 +60,7 @@
 use std::convert::{From, TryFrom};
 use std::fmt;
 use std::fmt::{Display, Formatter};
+use std::io::{Read, Write};
 
 use crate::thrift::{ApplicationError, Error, ProtocolError, ProtocolErrorKind};
 
@@ -75,8 +76,6 @@ pub use self::compact::{
     TCompactInputProtocol, TCompactInputProtocolFactory, TCompactOutputProtocol,
     TCompactOutputProtocolFactory,
 };
-
-use super::transport::{TReadTransport, TWriteTransport};
 
 // Default maximum depth to which `TInputProtocol::skip` will skip a Thrift
 // field. A default is necessary because Thrift structs or collections may
@@ -534,14 +533,14 @@ where
 /// ```
 pub trait TInputProtocolFactory {
     // Create a `TInputProtocol` that reads bytes from `transport`.
-    fn create(&self, transport: Box<dyn TReadTransport + Send>) -> Box<dyn TInputProtocol + Send>;
+    fn create(&self, transport: Box<dyn Read + Send>) -> Box<dyn TInputProtocol + Send>;
 }
 
 impl<T> TInputProtocolFactory for Box<T>
 where
     T: TInputProtocolFactory + ?Sized,
 {
-    fn create(&self, transport: Box<dyn TReadTransport + Send>) -> Box<dyn TInputProtocol + Send> {
+    fn create(&self, transport: Box<dyn Read + Send>) -> Box<dyn TInputProtocol + Send> {
         (**self).create(transport)
     }
 }
@@ -565,18 +564,14 @@ where
 /// ```
 pub trait TOutputProtocolFactory {
     /// Create a `TOutputProtocol` that writes bytes to `transport`.
-    fn create(&self, transport: Box<dyn TWriteTransport + Send>)
-        -> Box<dyn TOutputProtocol + Send>;
+    fn create(&self, transport: Box<dyn Write + Send>) -> Box<dyn TOutputProtocol + Send>;
 }
 
 impl<T> TOutputProtocolFactory for Box<T>
 where
     T: TOutputProtocolFactory + ?Sized,
 {
-    fn create(
-        &self,
-        transport: Box<dyn TWriteTransport + Send>,
-    ) -> Box<dyn TOutputProtocol + Send> {
+    fn create(&self, transport: Box<dyn Write + Send>) -> Box<dyn TOutputProtocol + Send> {
         (**self).create(transport)
     }
 }
