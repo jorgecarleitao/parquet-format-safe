@@ -22,10 +22,10 @@ use integer_encoding::{VarIntReader, VarIntWriter};
 
 use super::super::{Error, ProtocolError, ProtocolErrorKind, Result};
 use super::{
-    TFieldIdentifier, TInputProtocol, TInputProtocolFactory, TListIdentifier, TMapIdentifier,
-    TMessageIdentifier, TMessageType,
+    TFieldIdentifier, TInputProtocol, TListIdentifier, TMapIdentifier, TMessageIdentifier,
+    TMessageType,
 };
-use super::{TOutputProtocol, TOutputProtocolFactory, TSetIdentifier, TStructIdentifier, TType};
+use super::{TOutputProtocol, TSetIdentifier, TStructIdentifier, TType};
 
 pub(super) const COMPACT_PROTOCOL_ID: u8 = 0x82;
 pub(super) const COMPACT_VERSION: u8 = 0x01;
@@ -312,23 +312,6 @@ where
     }
 }
 
-/// Factory for creating instances of `TCompactInputProtocol`.
-#[derive(Default)]
-pub struct TCompactInputProtocolFactory;
-
-impl TCompactInputProtocolFactory {
-    /// Create a `TCompactInputProtocolFactory`.
-    pub fn new() -> TCompactInputProtocolFactory {
-        TCompactInputProtocolFactory {}
-    }
-}
-
-impl TInputProtocolFactory for TCompactInputProtocolFactory {
-    fn create(&self, transport: Box<dyn Read + Send>) -> Box<dyn TInputProtocol + Send> {
-        Box::new(TCompactInputProtocol::new(transport))
-    }
-}
-
 /// Write messages using the Thrift compact protocol.
 ///
 /// # Examples
@@ -590,23 +573,6 @@ where
 
     fn write_byte(&mut self, b: u8) -> Result<usize> {
         self.transport.write(&[b]).map_err(From::from)
-    }
-}
-
-/// Factory for creating instances of `TCompactOutputProtocol`.
-#[derive(Default)]
-pub struct TCompactOutputProtocolFactory;
-
-impl TCompactOutputProtocolFactory {
-    /// Create a `TCompactOutputProtocolFactory`.
-    pub fn new() -> TCompactOutputProtocolFactory {
-        TCompactOutputProtocolFactory {}
-    }
-}
-
-impl TOutputProtocolFactory for TCompactOutputProtocolFactory {
-    fn create(&self, transport: Box<dyn Write + Send>) -> Box<dyn TOutputProtocol + Send> {
-        Box::new(TCompactOutputProtocol::new(transport))
     }
 }
 

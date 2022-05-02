@@ -25,5 +25,5 @@ if [ -f src/$TARGET_FILE ]; then
   echo "Deleted old Parquet file."
 fi
 
-../thrift/compiler/cpp/cmake-build/bin/thrift --gen rs parquet.thrift
+../thrift/compiler/cpp/bin/thrift --gen rs parquet.thrift
 mv parquet.rs src/$TARGET_FILE

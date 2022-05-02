@@ -22,3 +22,34 @@ mod parquet_format;
 pub use crate::parquet_format::*;
 
 pub mod thrift;
+
+#[cfg(test)]
+mod tests {
+    use std::io::{Seek, SeekFrom};
+
+    use super::*;
+
+    #[test]
+    fn basic() {
+        let mut writer = std::io::Cursor::new(vec![]);
+        let mut protocol = thrift::protocol::TCompactOutputProtocol::new(&mut writer);
+        let metadata = FileMetaData {
+            version: 0,
+            schema: vec![],
+            num_rows: 0,
+            row_groups: vec![],
+            key_value_metadata: None,
+            created_by: None,
+            column_orders: None,
+            encryption_algorithm: None,
+            footer_signing_key_metadata: None,
+        };
+        metadata.write_to_out_protocol(&mut protocol).unwrap();
+
+        writer.seek(SeekFrom::Start(0)).unwrap();
+
+        let mut prot = thrift::protocol::TCompactInputProtocol::new(writer);
+        let result = FileMetaData::read_from_in_protocol(&mut prot).unwrap();
+        assert_eq!(result, metadata)
+    }
+}

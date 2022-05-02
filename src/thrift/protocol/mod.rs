@@ -60,7 +60,6 @@
 use std::convert::{From, TryFrom};
 use std::fmt;
 use std::fmt::{Display, Formatter};
-use std::io::{Read, Write};
 
 use crate::thrift::{ApplicationError, Error, ProtocolError, ProtocolErrorKind};
 
@@ -72,10 +71,7 @@ pub use compact_stream_write::TCompactOutputStreamProtocol;
 mod stream;
 pub use stream::{TInputStreamProtocol, TOutputStreamProtocol};
 
-pub use self::compact::{
-    TCompactInputProtocol, TCompactInputProtocolFactory, TCompactOutputProtocol,
-    TCompactOutputProtocolFactory,
-};
+pub use self::compact::{TCompactInputProtocol, TCompactOutputProtocol};
 
 // Default maximum depth to which `TInputProtocol::skip` will skip a Thrift
 // field. A default is necessary because Thrift structs or collections may
@@ -511,68 +507,6 @@ where
 
     fn write_byte(&mut self, b: u8) -> crate::thrift::Result<usize> {
         (**self).write_byte(b)
-    }
-}
-
-/// Helper type used by servers to create `TInputProtocol` instances for
-/// accepted client connections.
-///
-/// # Examples
-///
-/// Create a `TInputProtocolFactory` and use it to create a `TInputProtocol`.
-///
-/// ```no_run
-/// use thrift::protocol::{TBinaryInputProtocolFactory, TInputProtocolFactory};
-/// use thrift::transport::TTcpChannel;
-///
-/// let mut channel = TTcpChannel::new();
-/// channel.open("127.0.0.1:9090").unwrap();
-///
-/// let factory = TBinaryInputProtocolFactory::new();
-/// let protocol = factory.create(Box::new(channel));
-/// ```
-pub trait TInputProtocolFactory {
-    // Create a `TInputProtocol` that reads bytes from `transport`.
-    fn create(&self, transport: Box<dyn Read + Send>) -> Box<dyn TInputProtocol + Send>;
-}
-
-impl<T> TInputProtocolFactory for Box<T>
-where
-    T: TInputProtocolFactory + ?Sized,
-{
-    fn create(&self, transport: Box<dyn Read + Send>) -> Box<dyn TInputProtocol + Send> {
-        (**self).create(transport)
-    }
-}
-
-/// Helper type used by servers to create `TOutputProtocol` instances for
-/// accepted client connections.
-///
-/// # Examples
-///
-/// Create a `TOutputProtocolFactory` and use it to create a `TOutputProtocol`.
-///
-/// ```no_run
-/// use thrift::protocol::{TBinaryOutputProtocolFactory, TOutputProtocolFactory};
-/// use thrift::transport::TTcpChannel;
-///
-/// let mut channel = TTcpChannel::new();
-/// channel.open("127.0.0.1:9090").unwrap();
-///
-/// let factory = TBinaryOutputProtocolFactory::new();
-/// let protocol = factory.create(Box::new(channel));
-/// ```
-pub trait TOutputProtocolFactory {
-    /// Create a `TOutputProtocol` that writes bytes to `transport`.
-    fn create(&self, transport: Box<dyn Write + Send>) -> Box<dyn TOutputProtocol + Send>;
-}
-
-impl<T> TOutputProtocolFactory for Box<T>
-where
-    T: TOutputProtocolFactory + ?Sized,
-{
-    fn create(&self, transport: Box<dyn Write + Send>) -> Box<dyn TOutputProtocol + Send> {
-        (**self).create(transport)
     }
 }
 
