@@ -1853,7 +1853,12 @@ impl TimeUnit {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteTimeUnit"
+        )
+      ))
     }
   }
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeUnit> {
@@ -1915,7 +1920,12 @@ impl TimeUnit {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteTimeUnit"
+        )
+      ))
     }
   }
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
@@ -2629,7 +2639,12 @@ impl LogicalType {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteLogicalType"
+        )
+      ))
     }
   }
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<LogicalType> {
@@ -2761,7 +2776,12 @@ impl LogicalType {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteLogicalType"
+        )
+      ))
     }
   }
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
@@ -4060,7 +4080,12 @@ impl BloomFilterAlgorithm {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteBloomFilterAlgorithm"
+        )
+      ))
     }
   }
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterAlgorithm> {
@@ -4108,7 +4133,12 @@ impl BloomFilterAlgorithm {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteBloomFilterAlgorithm"
+        )
+      ))
     }
   }
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
@@ -4273,7 +4303,12 @@ impl BloomFilterHash {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteBloomFilterHash"
+        )
+      ))
     }
   }
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHash> {
@@ -4321,7 +4356,12 @@ impl BloomFilterHash {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteBloomFilterHash"
+        )
+      ))
     }
   }
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
@@ -4485,7 +4525,12 @@ impl BloomFilterCompression {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteBloomFilterCompression"
+        )
+      ))
     }
   }
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterCompression> {
@@ -4533,7 +4578,12 @@ impl BloomFilterCompression {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteBloomFilterCompression"
+        )
+      ))
     }
   }
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
@@ -6185,7 +6235,12 @@ impl ColumnCryptoMetaData {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteColumnCryptoMetaData"
+        )
+      ))
     }
   }
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnCryptoMetaData> {
@@ -6240,7 +6295,12 @@ impl ColumnCryptoMetaData {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteColumnCryptoMetaData"
+        )
+      ))
     }
   }
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
@@ -6997,7 +7057,12 @@ impl ColumnOrder {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteColumnOrder"
+        )
+      ))
     }
   }
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnOrder> {
@@ -7045,7 +7110,12 @@ impl ColumnOrder {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteColumnOrder"
+        )
+      ))
     }
   }
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
@@ -7995,7 +8065,12 @@ impl EncryptionAlgorithm {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteEncryptionAlgorithm"
+        )
+      ))
     }
   }
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionAlgorithm> {
@@ -8050,7 +8125,12 @@ impl EncryptionAlgorithm {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteEncryptionAlgorithm"
+        )
+      ))
     }
   }
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {

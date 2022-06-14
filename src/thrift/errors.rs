@@ -184,8 +184,6 @@ pub enum Error {
     /// This variant also functions as a catch-all: errors from handler
     /// functions are automatically returned as an `ApplicationError`.
     Application(ApplicationError),
-    /// IDL-defined exception structs.
-    User(Box<dyn error::Error + Sync + Send>),
 }
 
 impl Error {
@@ -273,7 +271,6 @@ impl Debug for Error {
             Error::Transport(ref e) => Debug::fmt(e, f),
             Error::Protocol(ref e) => Debug::fmt(e, f),
             Error::Application(ref e) => Debug::fmt(e, f),
-            Error::User(ref e) => Debug::fmt(e, f),
         }
     }
 }
@@ -284,7 +281,6 @@ impl Display for Error {
             Error::Transport(ref e) => Display::fmt(e, f),
             Error::Protocol(ref e) => Display::fmt(e, f),
             Error::Application(ref e) => Display::fmt(e, f),
-            Error::User(ref e) => Display::fmt(e, f),
         }
     }
 }
