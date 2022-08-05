@@ -15,6 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+use std::collections::TryReserveError;
 use std::convert::{From, Into};
 use std::convert::{Infallible, TryFrom};
 use std::fmt::{Debug, Display, Formatter};
@@ -450,6 +451,15 @@ impl From<std::num::TryFromIntError> for Error {
     fn from(err: std::num::TryFromIntError) -> Self {
         Error::Protocol(ProtocolError {
             kind: ProtocolErrorKind::InvalidData,
+            message: err.to_string(),
+        })
+    }
+}
+
+impl From<TryReserveError> for Error {
+    fn from(err: TryReserveError) -> Self {
+        Error::Protocol(ProtocolError {
+            kind: ProtocolErrorKind::SizeLimit,
             message: err.to_string(),
         })
     }

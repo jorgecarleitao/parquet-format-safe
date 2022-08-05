@@ -1,4 +1,4 @@
-use std::convert::{From, TryFrom};
+use std::convert::{From, TryFrom, TryInto};
 use std::io;
 
 use async_trait::async_trait;
@@ -25,18 +25,18 @@ pub struct TCompactInputStreamProtocol<T: Send> {
     // Saved because boolean fields and their value are encoded in a single byte,
     // and reading the field only occurs after the field id is read.
     pending_read_bool_value: Option<bool>,
-    // Underlying transport used for byte-level operations.
-    transport: T,
+    // Underlying reader used for byte-level operations.
+    reader: T,
 }
 
 impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TCompactInputStreamProtocol<T> {
-    /// Create a `TCompactInputProtocol` that reads bytes from `transport`.
-    pub fn new(transport: T) -> Self {
+    /// Create a `TCompactInputProtocol` that reads bytes from `reader`.
+    pub fn new(reader: T) -> Self {
         Self {
             last_read_field_id: 0,
             read_field_id_stack: Vec::new(),
             pending_read_bool_value: None,
-            transport,
+            reader,
         }
     }
 
@@ -49,7 +49,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TCompactInputStreamProtoco
             // high bits set high if count and type encoded separately
             possible_element_count.into()
         } else {
-            self.transport.read_varint_async::<u32>().await?
+            self.reader.read_varint_async::<u32>().await?
         };
 
         Ok((element_type, element_count))
@@ -87,7 +87,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
 
         // NOTE: unsigned right shift will pad with 0s
         let message_type: TMessageType = TMessageType::try_from(type_and_byte >> 5)?;
-        let sequence_number = self.transport.read_varint_async::<u32>().await?;
+        let sequence_number = self.reader.read_varint_async::<u32>().await?;
         let service_call_name = self.read_string().await?;
 
         self.last_read_field_id = 0;
@@ -181,13 +181,15 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
     }
 
     async fn read_bytes(&mut self) -> Result<Vec<u8>> {
-        let len = self.transport.read_varint_async::<u32>().await?;
-        let mut buf = vec![0u8; len as usize];
-        self.transport
-            .read_exact(&mut buf)
-            .await
-            .map_err(From::from)
-            .map(|_| buf)
+        let len = self.reader.read_varint_async::<u32>().await?;
+
+        let mut buf = vec![];
+        buf.try_reserve(len.try_into()?)?;
+        (&mut self.reader)
+            .take(len.try_into()?)
+            .read_to_end(&mut buf)
+            .await?;
+        Ok(buf)
     }
 
     async fn read_i8(&mut self) -> Result<i8> {
@@ -195,21 +197,21 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
     }
 
     async fn read_i16(&mut self) -> Result<i16> {
-        self.transport
+        self.reader
             .read_varint_async::<i16>()
             .await
             .map_err(From::from)
     }
 
     async fn read_i32(&mut self) -> Result<i32> {
-        self.transport
+        self.reader
             .read_varint_async::<i32>()
             .await
             .map_err(From::from)
     }
 
     async fn read_i64(&mut self) -> Result<i64> {
-        self.transport
+        self.reader
             .read_varint_async::<i64>()
             .await
             .map_err(From::from)
@@ -217,7 +219,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
 
     async fn read_double(&mut self) -> Result<f64> {
         let mut buf = [0; 8];
-        self.transport.read_exact(&mut buf).await?;
+        self.reader.read_exact(&mut buf).await?;
         let r = f64::from_le_bytes(buf);
         Ok(r)
     }
@@ -246,7 +248,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
     }
 
     async fn read_map_begin(&mut self) -> Result<TMapIdentifier> {
-        let element_count = self.transport.read_varint_async::<u32>().await?;
+        let element_count = self.reader.read_varint_async::<u32>().await?;
         if element_count == 0 {
             Ok(TMapIdentifier::new(None, None, 0))
         } else {
@@ -266,7 +268,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
 
     async fn read_byte(&mut self) -> Result<u8> {
         let mut buf = [0u8; 1];
-        self.transport
+        self.reader
             .read_exact(&mut buf)
             .await
             .map_err(From::from)
@@ -283,6 +285,6 @@ where
         cx: &mut std::task::Context<'_>,
         pos: io::SeekFrom,
     ) -> std::task::Poll<io::Result<u64>> {
-        std::pin::Pin::new(&mut self.transport).poll_seek(cx, pos)
+        std::pin::Pin::new(&mut self.reader).poll_seek(cx, pos)
     }
 }

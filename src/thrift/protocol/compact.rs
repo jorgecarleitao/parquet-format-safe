@@ -1,4 +1,4 @@
-use std::convert::{From, TryFrom};
+use std::convert::{From, TryFrom, TryInto};
 use std::io;
 use std::io::Read;
 
@@ -216,11 +216,14 @@ where
     #[inline]
     fn read_bytes(&mut self) -> Result<Vec<u8>> {
         let len = self.reader.read_varint::<u32>()?;
-        let mut buf = vec![0u8; len as usize];
+
+        let mut buf = vec![];
+        buf.try_reserve(len.try_into()?)?;
         self.reader
-            .read_exact(&mut buf)
-            .map_err(From::from)
-            .map(|_| buf)
+            .by_ref()
+            .take(len.try_into()?)
+            .read_to_end(&mut buf)?;
+        Ok(buf)
     }
 
     #[inline]
