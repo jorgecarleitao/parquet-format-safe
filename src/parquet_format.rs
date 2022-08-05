@@ -8,7 +8,7 @@
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
-use std::convert::{From, TryFrom};
+use std::convert::{From, TryFrom, TryInto};
 use std::default::Default;
 use std::error::Error;
 use std::fmt;
@@ -5809,14 +5809,14 @@ impl ColumnMetaData {
     written += self.type_.write_to_out_protocol(o_prot)?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("encodings", TType::List, 2))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::I32, self.encodings.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::I32, self.encodings.len().try_into()?))?;
     for e in &self.encodings {
       written += e.write_to_out_protocol(o_prot)?;
     }
     written += o_prot.write_list_end()?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("path_in_schema", TType::List, 3))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.path_in_schema.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.path_in_schema.len().try_into()?))?;
     for e in &self.path_in_schema {
       written += o_prot.write_string(e)?;
     }
@@ -5836,7 +5836,7 @@ impl ColumnMetaData {
     written += o_prot.write_field_end()?;
     if let Some(ref fld_var) = self.key_value_metadata {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("key_value_metadata", TType::List, 8))?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32))?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?))?;
       for e in fld_var {
         written += e.write_to_out_protocol(o_prot)?;
       }
@@ -5863,7 +5863,7 @@ impl ColumnMetaData {
     }
     if let Some(ref fld_var) = self.encoding_stats {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding_stats", TType::List, 13))?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32))?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?))?;
       for e in fld_var {
         written += e.write_to_out_protocol(o_prot)?;
       }
@@ -5887,14 +5887,14 @@ impl ColumnMetaData {
     written += self.type_.write_to_out_stream_protocol(o_prot).await?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("encodings", TType::List, 2)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::I32, self.encodings.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::I32, self.encodings.len().try_into()?)).await?;
     for e in &self.encodings {
       written += e.write_to_out_stream_protocol(o_prot).await?;
     }
     written += o_prot.write_list_end().await?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("path_in_schema", TType::List, 3)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.path_in_schema.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.path_in_schema.len().try_into()?)).await?;
     for e in &self.path_in_schema {
       written += o_prot.write_string(e).await?;
     }
@@ -5914,7 +5914,7 @@ impl ColumnMetaData {
     written += o_prot.write_field_end()?;
     if let Some(ref fld_var) = self.key_value_metadata {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("key_value_metadata", TType::List, 8)).await?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32)).await?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?)).await?;
       for e in fld_var {
         written += e.write_to_out_stream_protocol(o_prot).await?;
       }
@@ -5941,7 +5941,7 @@ impl ColumnMetaData {
     }
     if let Some(ref fld_var) = self.encoding_stats {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding_stats", TType::List, 13)).await?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32)).await?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?)).await?;
       for e in fld_var {
         written += e.write_to_out_stream_protocol(o_prot).await?;
       }
@@ -6135,7 +6135,7 @@ impl EncryptionWithColumnKey {
     let struct_ident = TStructIdentifier::new("EncryptionWithColumnKey");
     written += o_prot.write_struct_begin(&struct_ident)?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("path_in_schema", TType::List, 1))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.path_in_schema.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.path_in_schema.len().try_into()?))?;
     for e in &self.path_in_schema {
       written += o_prot.write_string(e)?;
     }
@@ -6155,7 +6155,7 @@ impl EncryptionWithColumnKey {
     let struct_ident = TStructIdentifier::new("EncryptionWithColumnKey");
     written += o_prot.write_struct_begin(&struct_ident).await?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("path_in_schema", TType::List, 1)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.path_in_schema.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.path_in_schema.len().try_into()?)).await?;
     for e in &self.path_in_schema {
       written += o_prot.write_string(e).await?;
     }
@@ -6840,7 +6840,7 @@ impl RowGroup {
     let struct_ident = TStructIdentifier::new("RowGroup");
     written += o_prot.write_struct_begin(&struct_ident)?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("columns", TType::List, 1))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.columns.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.columns.len().try_into()?))?;
     for e in &self.columns {
       written += e.write_to_out_protocol(o_prot)?;
     }
@@ -6854,7 +6854,7 @@ impl RowGroup {
     written += o_prot.write_field_end()?;
     if let Some(ref fld_var) = self.sorting_columns {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("sorting_columns", TType::List, 4))?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32))?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?))?;
       for e in fld_var {
         written += e.write_to_out_protocol(o_prot)?;
       }
@@ -6885,7 +6885,7 @@ impl RowGroup {
     let struct_ident = TStructIdentifier::new("RowGroup");
     written += o_prot.write_struct_begin(&struct_ident).await?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("columns", TType::List, 1)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.columns.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.columns.len().try_into()?)).await?;
     for e in &self.columns {
       written += e.write_to_out_stream_protocol(o_prot).await?;
     }
@@ -6899,7 +6899,7 @@ impl RowGroup {
     written += o_prot.write_field_end()?;
     if let Some(ref fld_var) = self.sorting_columns {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("sorting_columns", TType::List, 4)).await?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32)).await?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?)).await?;
       for e in fld_var {
         written += e.write_to_out_stream_protocol(o_prot).await?;
       }
@@ -7378,7 +7378,7 @@ impl OffsetIndex {
     let struct_ident = TStructIdentifier::new("OffsetIndex");
     written += o_prot.write_struct_begin(&struct_ident)?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("page_locations", TType::List, 1))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.page_locations.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.page_locations.len().try_into()?))?;
     for e in &self.page_locations {
       written += e.write_to_out_protocol(o_prot)?;
     }
@@ -7393,7 +7393,7 @@ impl OffsetIndex {
     let struct_ident = TStructIdentifier::new("OffsetIndex");
     written += o_prot.write_struct_begin(&struct_ident).await?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("page_locations", TType::List, 1)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.page_locations.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.page_locations.len().try_into()?)).await?;
     for e in &self.page_locations {
       written += e.write_to_out_stream_protocol(o_prot).await?;
     }
@@ -7609,21 +7609,21 @@ impl ColumnIndex {
     let struct_ident = TStructIdentifier::new("ColumnIndex");
     written += o_prot.write_struct_begin(&struct_ident)?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("null_pages", TType::List, 1))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Bool, self.null_pages.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Bool, self.null_pages.len().try_into()?))?;
     for e in &self.null_pages {
       written += o_prot.write_bool(*e)?;
     }
     written += o_prot.write_list_end()?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("min_values", TType::List, 2))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.min_values.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.min_values.len().try_into()?))?;
     for e in &self.min_values {
       written += o_prot.write_bytes(e)?;
     }
     written += o_prot.write_list_end()?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("max_values", TType::List, 3))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.max_values.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.max_values.len().try_into()?))?;
     for e in &self.max_values {
       written += o_prot.write_bytes(e)?;
     }
@@ -7634,7 +7634,7 @@ impl ColumnIndex {
     written += o_prot.write_field_end()?;
     if let Some(ref fld_var) = self.null_counts {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("null_counts", TType::List, 5))?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::I64, fld_var.len() as u32))?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::I64, fld_var.len().try_into()?))?;
       for e in fld_var {
         written += o_prot.write_i64(*e)?;
       }
@@ -7650,21 +7650,21 @@ impl ColumnIndex {
     let struct_ident = TStructIdentifier::new("ColumnIndex");
     written += o_prot.write_struct_begin(&struct_ident).await?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("null_pages", TType::List, 1)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Bool, self.null_pages.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Bool, self.null_pages.len().try_into()?)).await?;
     for e in &self.null_pages {
       written += o_prot.write_bool(*e).await?;
     }
     written += o_prot.write_list_end().await?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("min_values", TType::List, 2)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.min_values.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.min_values.len().try_into()?)).await?;
     for e in &self.min_values {
       written += o_prot.write_bytes(e).await?;
     }
     written += o_prot.write_list_end().await?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("max_values", TType::List, 3)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.max_values.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::String, self.max_values.len().try_into()?)).await?;
     for e in &self.max_values {
       written += o_prot.write_bytes(e).await?;
     }
@@ -7675,7 +7675,7 @@ impl ColumnIndex {
     written += o_prot.write_field_end()?;
     if let Some(ref fld_var) = self.null_counts {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("null_counts", TType::List, 5)).await?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::I64, fld_var.len() as u32)).await?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::I64, fld_var.len().try_into()?)).await?;
       for e in fld_var {
         written += o_prot.write_i64(*e).await?;
       }
@@ -8450,7 +8450,7 @@ impl FileMetaData {
     written += o_prot.write_i32(self.version)?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("schema", TType::List, 2))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.schema.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.schema.len().try_into()?))?;
     for e in &self.schema {
       written += e.write_to_out_protocol(o_prot)?;
     }
@@ -8460,7 +8460,7 @@ impl FileMetaData {
     written += o_prot.write_i64(self.num_rows)?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("row_groups", TType::List, 4))?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.row_groups.len() as u32))?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.row_groups.len().try_into()?))?;
     for e in &self.row_groups {
       written += e.write_to_out_protocol(o_prot)?;
     }
@@ -8468,7 +8468,7 @@ impl FileMetaData {
     written += o_prot.write_field_end()?;
     if let Some(ref fld_var) = self.key_value_metadata {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("key_value_metadata", TType::List, 5))?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32))?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?))?;
       for e in fld_var {
         written += e.write_to_out_protocol(o_prot)?;
       }
@@ -8482,7 +8482,7 @@ impl FileMetaData {
     }
     if let Some(ref fld_var) = self.column_orders {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("column_orders", TType::List, 7))?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32))?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?))?;
       for e in fld_var {
         written += e.write_to_out_protocol(o_prot)?;
       }
@@ -8511,7 +8511,7 @@ impl FileMetaData {
     written += o_prot.write_i32(self.version).await?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("schema", TType::List, 2)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.schema.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.schema.len().try_into()?)).await?;
     for e in &self.schema {
       written += e.write_to_out_stream_protocol(o_prot).await?;
     }
@@ -8521,7 +8521,7 @@ impl FileMetaData {
     written += o_prot.write_i64(self.num_rows).await?;
     written += o_prot.write_field_end()?;
     written += o_prot.write_field_begin(&TFieldIdentifier::new("row_groups", TType::List, 4)).await?;
-    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.row_groups.len() as u32)).await?;
+    written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, self.row_groups.len().try_into()?)).await?;
     for e in &self.row_groups {
       written += e.write_to_out_stream_protocol(o_prot).await?;
     }
@@ -8529,7 +8529,7 @@ impl FileMetaData {
     written += o_prot.write_field_end()?;
     if let Some(ref fld_var) = self.key_value_metadata {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("key_value_metadata", TType::List, 5)).await?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32)).await?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?)).await?;
       for e in fld_var {
         written += e.write_to_out_stream_protocol(o_prot).await?;
       }
@@ -8543,7 +8543,7 @@ impl FileMetaData {
     }
     if let Some(ref fld_var) = self.column_orders {
       written += o_prot.write_field_begin(&TFieldIdentifier::new("column_orders", TType::List, 7)).await?;
-      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len() as u32)).await?;
+      written += o_prot.write_list_begin(&TListIdentifier::new(TType::Struct, fld_var.len().try_into()?)).await?;
       for e in fld_var {
         written += e.write_to_out_stream_protocol(o_prot).await?;
       }

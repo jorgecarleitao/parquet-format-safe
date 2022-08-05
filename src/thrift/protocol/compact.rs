@@ -48,6 +48,8 @@ where
     pending_read_bool_value: Option<bool>,
     // Underlying reader used for byte-level operations.
     reader: R,
+    // remaining bytes that can be read before refusing to read more
+    remaining: usize,
 }
 
 impl<R> TCompactInputProtocol<R>
@@ -56,13 +58,27 @@ where
 {
     /// Create a [`TCompactInputProtocol`] that reads bytes from `reader`.
     #[inline]
-    pub fn new(reader: R) -> Self {
+    pub fn new(reader: R, max_bytes: usize) -> Self {
         Self {
             last_read_field_id: 0,
             read_field_id_stack: Vec::new(),
             pending_read_bool_value: None,
+            remaining: max_bytes,
             reader,
         }
+    }
+
+    fn update_remaining<T>(&mut self, element: usize) -> Result<()> {
+        self.remaining = self
+            .remaining
+            .checked_sub((element).saturating_mul(std::mem::size_of::<T>()))
+            .ok_or_else(|| {
+                Error::Protocol(ProtocolError {
+                    kind: ProtocolErrorKind::SizeLimit,
+                    message: "The thrift file would allocate more bytes than allowed".to_string(),
+                })
+            })?;
+        Ok(())
     }
 
     #[inline]
@@ -77,6 +93,7 @@ where
         } else {
             self.reader.read_varint::<u32>()?
         };
+        self.update_remaining::<usize>(element_count as usize)?;
 
         Ok((element_type, element_count))
     }
@@ -133,6 +150,7 @@ where
 
     #[inline]
     fn read_struct_begin(&mut self) -> Result<Option<TStructIdentifier>> {
+        self.update_remaining::<i16>(1)?;
         self.read_field_id_stack.push(self.last_read_field_id);
         self.last_read_field_id = 0;
         Ok(None)
@@ -217,6 +235,8 @@ where
     fn read_bytes(&mut self) -> Result<Vec<u8>> {
         let len = self.reader.read_varint::<u32>()?;
 
+        self.update_remaining::<u8>(len.try_into()?)?;
+
         let mut buf = vec![];
         buf.try_reserve(len.try_into()?)?;
         self.reader
@@ -290,6 +310,7 @@ where
             let type_header = self.read_byte()?;
             let key_type = collection_u8_to_type((type_header & 0xF0) >> 4)?;
             let val_type = collection_u8_to_type(type_header & 0x0F)?;
+            self.update_remaining::<usize>(element_count.try_into()?)?;
             Ok(TMapIdentifier::new(key_type, val_type, element_count))
         }
     }

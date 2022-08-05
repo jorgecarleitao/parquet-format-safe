@@ -49,7 +49,7 @@ mod tests {
 
         writer.seek(SeekFrom::Start(0)).unwrap();
 
-        let mut prot = thrift::protocol::TCompactInputProtocol::new(writer);
+        let mut prot = thrift::protocol::TCompactInputProtocol::new(writer, usize::MAX);
         let result = FileMetaData::read_from_in_protocol(&mut prot).unwrap();
         assert_eq!(result, metadata)
     }
