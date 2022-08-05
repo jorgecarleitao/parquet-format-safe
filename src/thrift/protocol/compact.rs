@@ -16,23 +16,6 @@ pub(super) const COMPACT_VERSION: u8 = 0x01;
 pub(super) const COMPACT_VERSION_MASK: u8 = 0x1F;
 
 /// Read messages encoded in the Thrift compact protocol.
-///
-/// # Examples
-///
-/// Create and use a `TCompactInputProtocol`.
-///
-/// ```no_run
-/// use thrift::protocol::{TCompactInputProtocol, TInputProtocol};
-/// use thrift::reader::TTcpChannel;
-///
-/// let mut channel = TTcpChannel::new();
-/// channel.open("localhost:9090").unwrap();
-///
-/// let mut protocol = TCompactInputProtocol::new(channel);
-///
-/// let recvd_bool = protocol.read_bool().unwrap();
-/// let recvd_string = protocol.read_string().unwrap();
-/// ```
 #[derive(Debug)]
 pub struct TCompactInputProtocol<R>
 where

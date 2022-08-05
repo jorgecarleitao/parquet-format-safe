@@ -16,47 +16,6 @@
 // under the License.
 
 //! Types used to send and receive primitives between a Thrift client and server.
-//!
-//! # Examples
-//!
-//! Create and use a `TInputProtocol`.
-//!
-//! ```no_run
-//! use thrift::protocol::{TBinaryInputProtocol, TInputProtocol};
-//! use thrift::transport::TTcpChannel;
-//!
-//! // create the I/O channel
-//! let mut channel = TTcpChannel::new();
-//! channel.open("127.0.0.1:9090").unwrap();
-//!
-//! // create the protocol to decode bytes into types
-//! let mut protocol = TBinaryInputProtocol::new(channel, true);
-//!
-//! // read types from the wire
-//! let field_identifier = protocol.read_field_begin().unwrap();
-//! let field_contents = protocol.read_string().unwrap();
-//! let field_end = protocol.read_field_end().unwrap();
-//! ```
-//!
-//! Create and use a `TOutputProtocol`.
-//!
-//! ```no_run
-//! use thrift::protocol::{TBinaryOutputProtocol, TFieldIdentifier, TOutputProtocol, TType};
-//! use thrift::transport::TTcpChannel;
-//!
-//! // create the I/O channel
-//! let mut channel = TTcpChannel::new();
-//! channel.open("127.0.0.1:9090").unwrap();
-//!
-//! // create the protocol to encode types into bytes
-//! let mut protocol = TBinaryOutputProtocol::new(channel, true);
-//!
-//! // write types
-//! protocol.write_field_begin(&TFieldIdentifier::new("string_thing", TType::String, 1)).unwrap();
-//! protocol.write_string("foo").unwrap();
-//! protocol.write_field_end().unwrap();
-//! ```
-
 use std::convert::{From, TryFrom};
 use std::fmt;
 use std::fmt::{Display, Formatter};
@@ -91,24 +50,6 @@ const MAXIMUM_SKIP_DEPTH: i8 = 64;
 ///
 /// All methods return a `thrift::Result`. If an `Err` is returned the protocol
 /// instance and its underlying transport should be terminated.
-///
-/// # Examples
-///
-/// Create and use a `TInputProtocol`
-///
-/// ```no_run
-/// use thrift::protocol::{TBinaryInputProtocol, TInputProtocol};
-/// use thrift::transport::TTcpChannel;
-///
-/// let mut channel = TTcpChannel::new();
-/// channel.open("127.0.0.1:9090").unwrap();
-///
-/// let mut protocol = TBinaryInputProtocol::new(channel, true);
-///
-/// let field_identifier = protocol.read_field_begin().unwrap();
-/// let field_contents = protocol.read_string().unwrap();
-/// let field_end = protocol.read_field_end().unwrap();
-/// ```
 pub trait TInputProtocol {
     /// Read the beginning of a Thrift message.
     fn read_message_begin(&mut self) -> crate::thrift::Result<TMessageIdentifier>;
@@ -240,24 +181,6 @@ pub trait TInputProtocol {
 ///
 /// All methods return a `thrift::Result`. If an `Err` is returned the protocol
 /// instance and its underlying transport should be terminated.
-///
-/// # Examples
-///
-/// Create and use a `TOutputProtocol`
-///
-/// ```no_run
-/// use thrift::protocol::{TBinaryOutputProtocol, TFieldIdentifier, TOutputProtocol, TType};
-/// use thrift::transport::TTcpChannel;
-///
-/// let mut channel = TTcpChannel::new();
-/// channel.open("127.0.0.1:9090").unwrap();
-///
-/// let mut protocol = TBinaryOutputProtocol::new(channel, true);
-///
-/// protocol.write_field_begin(&TFieldIdentifier::new("string_thing", TType::String, 1)).unwrap();
-/// protocol.write_string("foo").unwrap();
-/// protocol.write_field_end().unwrap();
-/// ```
 pub trait TOutputProtocol {
     /// Write the beginning of a Thrift message.
     fn write_message_begin(

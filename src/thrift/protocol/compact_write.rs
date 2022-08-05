@@ -11,23 +11,6 @@ use super::{TOutputProtocol, TSetIdentifier, TStructIdentifier, TType};
 use super::compact::{COMPACT_PROTOCOL_ID, COMPACT_VERSION};
 
 /// Write messages using the Thrift compact protocol.
-///
-/// # Examples
-///
-/// Create and use a `TCompactOutputProtocol`.
-///
-/// ```no_run
-/// use thrift::protocol::{TCompactOutputProtocol, TOutputProtocol};
-/// use thrift::transport::TTcpChannel;
-///
-/// let mut channel = TTcpChannel::new();
-/// channel.open("localhost:9090").unwrap();
-///
-/// let mut protocol = TCompactOutputProtocol::new(channel);
-///
-/// protocol.write_bool(true).unwrap();
-/// protocol.write_string("test_string").unwrap();
-/// ```
 #[derive(Debug)]
 pub struct TCompactOutputProtocol<T>
 where
