@@ -65,13 +65,15 @@ use crate::thrift::{ApplicationError, Error, ProtocolError, ProtocolErrorKind};
 
 mod compact;
 mod compact_stream;
+mod compact_write;
 pub use compact_stream::TCompactInputStreamProtocol;
 mod compact_stream_write;
 pub use compact_stream_write::TCompactOutputStreamProtocol;
 mod stream;
 pub use stream::{TInputStreamProtocol, TOutputStreamProtocol};
 
-pub use self::compact::{TCompactInputProtocol, TCompactOutputProtocol};
+pub use compact::TCompactInputProtocol;
+pub use compact_write::TCompactOutputProtocol;
 
 // Default maximum depth to which `TInputProtocol::skip` will skip a Thrift
 // field. A default is necessary because Thrift structs or collections may

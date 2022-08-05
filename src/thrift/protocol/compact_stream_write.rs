@@ -23,7 +23,8 @@ use integer_encoding::VarIntAsyncWriter;
 
 use crate::thrift::Result;
 
-use super::compact::{collection_type_to_u8, type_to_u8, COMPACT_PROTOCOL_ID, COMPACT_VERSION};
+use super::compact::{COMPACT_PROTOCOL_ID, COMPACT_VERSION};
+use super::compact_write::{collection_type_to_u8, type_to_u8};
 use super::{
     TFieldIdentifier, TListIdentifier, TMapIdentifier, TMessageIdentifier, TOutputStreamProtocol,
     TSetIdentifier, TStructIdentifier, TType,
