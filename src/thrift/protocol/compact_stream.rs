@@ -246,7 +246,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
     }
 
     async fn read_map_begin(&mut self) -> Result<TMapIdentifier> {
-        let element_count = self.transport.read_varint_async::<u32>().await? as i32;
+        let element_count = self.transport.read_varint_async::<u32>().await?;
         if element_count == 0 {
             Ok(TMapIdentifier::new(None, None, 0))
         } else {

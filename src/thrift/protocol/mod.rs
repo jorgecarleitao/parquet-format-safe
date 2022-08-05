@@ -631,13 +631,13 @@ pub struct TMapIdentifier {
     /// Map value type.
     pub value_type: Option<TType>,
     /// Number of entries in the map.
-    pub size: i32,
+    pub size: u32,
 }
 
 impl TMapIdentifier {
     /// Create a `TMapIdentifier` for a map with `size` entries of type
     /// `key_type -> value_type`.
-    pub fn new<K, V>(key_type: K, value_type: V, size: i32) -> TMapIdentifier
+    pub fn new<K, V>(key_type: K, value_type: V, size: u32) -> TMapIdentifier
     where
         K: Into<Option<TType>>,
         V: Into<Option<TType>>,

@@ -73,7 +73,7 @@ where
         let possible_element_count = (header & 0xF0) >> 4;
         let element_count = if possible_element_count != 15 {
             // high bits set high if count and type encoded separately
-            possible_element_count as u32
+            possible_element_count.into()
         } else {
             self.reader.read_varint::<u32>()?
         };
@@ -280,7 +280,7 @@ where
 
     #[inline]
     fn read_map_begin(&mut self) -> Result<TMapIdentifier> {
-        let element_count = self.reader.read_varint::<u32>()? as i32;
+        let element_count = self.reader.read_varint::<u32>()?;
         if element_count == 0 {
             Ok(TMapIdentifier::new(None, None, 0))
         } else {

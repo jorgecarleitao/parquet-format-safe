@@ -1,4 +1,5 @@
 use std::convert::From;
+use std::convert::TryInto;
 use std::io::Write;
 
 use integer_encoding::VarIntWriter;
@@ -102,10 +103,7 @@ where
         let mut written = 0;
         written += self.write_byte(COMPACT_PROTOCOL_ID)?;
         written += self.write_byte((u8::from(identifier.message_type) << 5) | COMPACT_VERSION)?;
-        // cast i32 as u32 so that varint writing won't use zigzag encoding
-        written += self
-            .transport
-            .write_varint(identifier.sequence_number as u32)?;
+        written += self.transport.write_varint(identifier.sequence_number)?;
         written += self.write_string(&identifier.name)?;
         Ok(written)
     }
@@ -180,9 +178,7 @@ where
 
     fn write_bytes(&mut self, b: &[u8]) -> Result<usize> {
         let mut written = 0;
-        // length is strictly positive as per the spec, so
-        // cast i32 as u32 so that varint writing won't use zigzag encoding
-        written += self.transport.write_varint(b.len() as u32)?;
+        written += self.transport.write_varint::<u32>(b.len().try_into()?)?;
         self.transport.write_all(b)?;
         written += b.len();
         Ok(written)
@@ -235,9 +231,7 @@ where
             self.write_byte(0)
         } else {
             let mut written = 0;
-            // element count is strictly positive as per the spec, so
-            // cast i32 as u32 so that varint writing won't use zigzag encoding
-            written += self.transport.write_varint(identifier.size as u32)?;
+            written += self.transport.write_varint(identifier.size)?;
 
             let key_type = identifier
                 .key_type

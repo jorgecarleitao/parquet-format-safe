@@ -1,4 +1,5 @@
 use std::convert::From;
+use std::convert::TryInto;
 
 use async_trait::async_trait;
 use futures::{AsyncWrite, AsyncWriteExt};
@@ -98,10 +99,9 @@ where
         written += self
             .write_byte((u8::from(identifier.message_type) << 5) | COMPACT_VERSION)
             .await?;
-        // cast i32 as u32 so that varint writing won't use zigzag encoding
         written += self
             .transport
-            .write_varint_async(identifier.sequence_number as u32)
+            .write_varint_async(identifier.sequence_number)
             .await?;
         written += self.write_string(&identifier.name).await?;
         Ok(written)
@@ -176,9 +176,10 @@ where
     }
 
     async fn write_bytes(&mut self, b: &[u8]) -> Result<usize> {
-        // length is strictly positive as per the spec, so
-        // cast i32 as u32 so that varint writing won't use zigzag encoding
-        let mut written = self.transport.write_varint_async(b.len() as u32).await?;
+        let mut written = self
+            .transport
+            .write_varint_async::<u32>(b.len().try_into()?)
+            .await?;
         self.transport.write_all(b).await?;
         written += b.len();
         Ok(written)
@@ -241,11 +242,7 @@ where
         if identifier.size == 0 {
             self.write_byte(0).await
         } else {
-            // element count is strictly positive as per the spec, so
-            // cast i32 as u32 so that varint writing won't use zigzag encoding
-            self.transport
-                .write_varint_async(identifier.size as u32)
-                .await?;
+            self.transport.write_varint_async(identifier.size).await?;
 
             let key_type = identifier
                 .key_type
