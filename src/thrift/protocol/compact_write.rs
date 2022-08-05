@@ -72,7 +72,7 @@ where
         Ok(written)
     }
 
-    fn write_list_set_begin(&mut self, element_type: TType, element_count: i32) -> Result<usize> {
+    fn write_list_set_begin(&mut self, element_type: TType, element_count: u32) -> Result<usize> {
         let mut written = 0;
 
         let elem_identifier = collection_type_to_u8(element_type);
@@ -82,9 +82,7 @@ where
         } else {
             let header = 0xF0 | elem_identifier;
             written += self.write_byte(header)?;
-            // element count is strictly positive as per the spec, so
-            // cast i32 as u32 so that varint writing won't use zigzag encoding
-            written += self.transport.write_varint(element_count as u32)?;
+            written += self.transport.write_varint(element_count)?;
         }
         Ok(written)
     }

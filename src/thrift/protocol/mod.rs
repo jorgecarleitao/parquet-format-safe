@@ -520,7 +520,7 @@ pub struct TMessageIdentifier {
     /// Message type.
     pub message_type: TMessageType,
     /// Ordered sequence number identifying the message.
-    pub sequence_number: i32,
+    pub sequence_number: u32,
 }
 
 impl TMessageIdentifier {
@@ -529,7 +529,7 @@ impl TMessageIdentifier {
     pub fn new<S: Into<String>>(
         name: S,
         message_type: TMessageType,
-        sequence_number: i32,
+        sequence_number: u32,
     ) -> TMessageIdentifier {
         TMessageIdentifier {
             name: name.into(),
@@ -595,13 +595,13 @@ pub struct TListIdentifier {
     /// Type of the elements in the list.
     pub element_type: TType,
     /// Number of elements in the list.
-    pub size: i32,
+    pub size: u32,
 }
 
 impl TListIdentifier {
     /// Create a `TListIdentifier` for a list with `size` elements of type
     /// `element_type`.
-    pub fn new(element_type: TType, size: i32) -> TListIdentifier {
+    pub fn new(element_type: TType, size: u32) -> TListIdentifier {
         TListIdentifier { element_type, size }
     }
 }
@@ -612,13 +612,13 @@ pub struct TSetIdentifier {
     /// Type of the elements in the set.
     pub element_type: TType,
     /// Number of elements in the set.
-    pub size: i32,
+    pub size: u32,
 }
 
 impl TSetIdentifier {
     /// Create a `TSetIdentifier` for a set with `size` elements of type
     /// `element_type`.
-    pub fn new(element_type: TType, size: i32) -> TSetIdentifier {
+    pub fn new(element_type: TType, size: u32) -> TSetIdentifier {
         TSetIdentifier { element_type, size }
     }
 }

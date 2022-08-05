@@ -15,8 +15,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-use std::convert::TryFrom;
 use std::convert::{From, Into};
+use std::convert::{Infallible, TryFrom};
 use std::fmt::{Debug, Display, Formatter};
 use std::{error, fmt, io, string};
 
@@ -442,6 +442,24 @@ impl From<string::FromUtf8Error> for Error {
         Error::Protocol(ProtocolError {
             kind: ProtocolErrorKind::InvalidData,
             message: err.to_string(), // FIXME: use fmt::Error's debug string
+        })
+    }
+}
+
+impl From<std::num::TryFromIntError> for Error {
+    fn from(err: std::num::TryFromIntError) -> Self {
+        Error::Protocol(ProtocolError {
+            kind: ProtocolErrorKind::InvalidData,
+            message: err.to_string(),
+        })
+    }
+}
+
+impl From<Infallible> for Error {
+    fn from(err: Infallible) -> Self {
+        Error::Protocol(ProtocolError {
+            kind: ProtocolErrorKind::InvalidData,
+            message: err.to_string(),
         })
     }
 }
