@@ -3,4 +3,4 @@ make
 popd
 
 ../thrift/compiler/cpp/bin/thrift --gen rs parquet.thrift
-mv parquet.rs src/$TARGET_FILE
+mv parquet.rs src/parquet_format.rs
