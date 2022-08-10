@@ -1,7 +1,10 @@
 # parquet-format-safe
 
-This is a crate contains an implementation of Thirft and generated Rust code
+This crate contains an implementation of Thirft and generated Rust code
 associated to Parquet's thrift definition.
+
+Note that this crate does not contain functionality to read the parquet format.
+See [parquet2](https://github.com/jorgecarleitao/parquet2) for such functionality.
 
 * supports `sync` and `async` read API
 * supports `sync` and `async` write API

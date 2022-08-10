@@ -4,9 +4,7 @@ version = "0.1.0"
 license = "MIT/Apache-2.0"
 description = "Safe Parquet and Thrift reader and writer (sync and async)"
 authors = [
-    "Chao Sun <sunchao@apache.org>",
-    "Ivan Sadikov <ivan.sadikov@gmail.com>",
-    "Neville Dipale <nevilledips@gmail.com>",
+    "Apache Thrift contributors <dev@thrift.apache.org>",
     "Jorge Leitao <jorgecarleitao@gmail.com>",
 ]
 edition = "2021"
