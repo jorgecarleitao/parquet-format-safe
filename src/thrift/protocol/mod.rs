@@ -23,16 +23,32 @@ use std::fmt::{Display, Formatter};
 use crate::thrift::{ApplicationError, Error, ProtocolError, ProtocolErrorKind};
 
 mod compact;
-mod compact_stream;
-mod compact_write;
-pub use compact_stream::TCompactInputStreamProtocol;
-mod compact_stream_write;
-pub use compact_stream_write::TCompactOutputStreamProtocol;
-mod stream;
-pub use stream::{TInputStreamProtocol, TOutputStreamProtocol};
 
 pub use compact::TCompactInputProtocol;
+
+mod compact_write;
 pub use compact_write::TCompactOutputProtocol;
+
+#[cfg(feature = "async")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
+mod stream;
+#[cfg(feature = "async")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
+pub use stream::{TInputStreamProtocol, TOutputStreamProtocol};
+
+#[cfg(feature = "async")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
+mod compact_stream;
+#[cfg(feature = "async")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
+pub use compact_stream::TCompactInputStreamProtocol;
+
+#[cfg(feature = "async")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
+mod compact_stream_write;
+#[cfg(feature = "async")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
+pub use compact_stream_write::TCompactOutputStreamProtocol;
 
 // Default maximum depth to which `TInputProtocol::skip` will skip a Thrift
 // field. A default is necessary because Thrift structs or collections may

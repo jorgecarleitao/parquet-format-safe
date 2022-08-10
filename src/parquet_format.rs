@@ -18,7 +18,9 @@ use std::rc::Rc;
 use crate::thrift;
 
 use thrift::{ApplicationError, ApplicationErrorKind, ProtocolError, ProtocolErrorKind};
-use thrift::protocol::{TFieldIdentifier, TListIdentifier, TMapIdentifier, TMessageIdentifier, TMessageType, TInputProtocol, TInputStreamProtocol, TOutputProtocol, TOutputStreamProtocol, TSetIdentifier, TStructIdentifier, TType};
+use thrift::protocol::{TFieldIdentifier, TListIdentifier, TMapIdentifier, TMessageIdentifier, TMessageType, TInputProtocol, TOutputProtocol, TSetIdentifier, TStructIdentifier, TType};
+#[cfg(feature = "async")]
+use thrift::protocol::{TInputStreamProtocol, TOutputStreamProtocol};
 use thrift::protocol::field_id;
 use thrift::protocol::verify_expected_message_type;
 use thrift::protocol::verify_expected_sequence_number;
@@ -56,6 +58,7 @@ impl Type {
     o_prot.write_i32(self.0)
   }
   #[allow(clippy::trivially_copy_pass_by_ref)]
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
@@ -63,6 +66,7 @@ impl Type {
     let enum_value = i_prot.read_i32()?;
     Ok(Type::from(enum_value))
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Type> {
     let enum_value = i_prot.read_i32().await?;
     Ok(Type::from(enum_value))
@@ -230,6 +234,7 @@ impl ConvertedType {
     o_prot.write_i32(self.0)
   }
   #[allow(clippy::trivially_copy_pass_by_ref)]
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
@@ -237,6 +242,7 @@ impl ConvertedType {
     let enum_value = i_prot.read_i32()?;
     Ok(ConvertedType::from(enum_value))
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ConvertedType> {
     let enum_value = i_prot.read_i32().await?;
     Ok(ConvertedType::from(enum_value))
@@ -312,6 +318,7 @@ impl FieldRepetitionType {
     o_prot.write_i32(self.0)
   }
   #[allow(clippy::trivially_copy_pass_by_ref)]
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
@@ -319,6 +326,7 @@ impl FieldRepetitionType {
     let enum_value = i_prot.read_i32()?;
     Ok(FieldRepetitionType::from(enum_value))
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FieldRepetitionType> {
     let enum_value = i_prot.read_i32().await?;
     Ok(FieldRepetitionType::from(enum_value))
@@ -415,6 +423,7 @@ impl Encoding {
     o_prot.write_i32(self.0)
   }
   #[allow(clippy::trivially_copy_pass_by_ref)]
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
@@ -422,6 +431,7 @@ impl Encoding {
     let enum_value = i_prot.read_i32()?;
     Ok(Encoding::from(enum_value))
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Encoding> {
     let enum_value = i_prot.read_i32().await?;
     Ok(Encoding::from(enum_value))
@@ -497,6 +507,7 @@ impl CompressionCodec {
     o_prot.write_i32(self.0)
   }
   #[allow(clippy::trivially_copy_pass_by_ref)]
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
@@ -504,6 +515,7 @@ impl CompressionCodec {
     let enum_value = i_prot.read_i32()?;
     Ok(CompressionCodec::from(enum_value))
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<CompressionCodec> {
     let enum_value = i_prot.read_i32().await?;
     Ok(CompressionCodec::from(enum_value))
@@ -563,6 +575,7 @@ impl PageType {
     o_prot.write_i32(self.0)
   }
   #[allow(clippy::trivially_copy_pass_by_ref)]
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
@@ -570,6 +583,7 @@ impl PageType {
     let enum_value = i_prot.read_i32()?;
     Ok(PageType::from(enum_value))
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageType> {
     let enum_value = i_prot.read_i32().await?;
     Ok(PageType::from(enum_value))
@@ -625,6 +639,7 @@ impl BoundaryOrder {
     o_prot.write_i32(self.0)
   }
   #[allow(clippy::trivially_copy_pass_by_ref)]
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
@@ -632,6 +647,7 @@ impl BoundaryOrder {
     let enum_value = i_prot.read_i32()?;
     Ok(BoundaryOrder::from(enum_value))
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BoundaryOrder> {
     let enum_value = i_prot.read_i32().await?;
     Ok(BoundaryOrder::from(enum_value))
@@ -767,6 +783,7 @@ impl Statistics {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Statistics> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Vec<u8>> = None;
@@ -861,6 +878,7 @@ impl Statistics {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("Statistics");
@@ -946,6 +964,7 @@ impl StringType {
     let ret = StringType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<StringType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -973,6 +992,7 @@ impl StringType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("StringType");
@@ -1020,6 +1040,7 @@ impl UUIDType {
     let ret = UUIDType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<UUIDType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1047,6 +1068,7 @@ impl UUIDType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("UUIDType");
@@ -1094,6 +1116,7 @@ impl MapType {
     let ret = MapType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MapType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1121,6 +1144,7 @@ impl MapType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("MapType");
@@ -1168,6 +1192,7 @@ impl ListType {
     let ret = ListType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ListType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1195,6 +1220,7 @@ impl ListType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("ListType");
@@ -1242,6 +1268,7 @@ impl EnumType {
     let ret = EnumType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EnumType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1269,6 +1296,7 @@ impl EnumType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("EnumType");
@@ -1316,6 +1344,7 @@ impl DateType {
     let ret = DateType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DateType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1343,6 +1372,7 @@ impl DateType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("DateType");
@@ -1395,6 +1425,7 @@ impl NullType {
     let ret = NullType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<NullType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1422,6 +1453,7 @@ impl NullType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("NullType");
@@ -1495,6 +1527,7 @@ impl DecimalType {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DecimalType> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
@@ -1543,6 +1576,7 @@ impl DecimalType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("DecimalType");
@@ -1591,6 +1625,7 @@ impl MilliSeconds {
     let ret = MilliSeconds {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MilliSeconds> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1618,6 +1653,7 @@ impl MilliSeconds {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("MilliSeconds");
@@ -1665,6 +1701,7 @@ impl MicroSeconds {
     let ret = MicroSeconds {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MicroSeconds> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1692,6 +1729,7 @@ impl MicroSeconds {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("MicroSeconds");
@@ -1739,6 +1777,7 @@ impl NanoSeconds {
     let ret = NanoSeconds {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<NanoSeconds> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -1766,6 +1805,7 @@ impl NanoSeconds {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("NanoSeconds");
@@ -1861,6 +1901,7 @@ impl TimeUnit {
       ))
     }
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeUnit> {
     let mut ret: Option<TimeUnit> = None;
     let mut received_field_count = 0;
@@ -1952,6 +1993,7 @@ impl TimeUnit {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("TimeUnit");
     let mut written = o_prot.write_struct_begin(&struct_ident).await?;
@@ -2032,6 +2074,7 @@ impl TimestampType {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimestampType> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<bool> = None;
@@ -2080,6 +2123,7 @@ impl TimestampType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("TimestampType");
@@ -2150,6 +2194,7 @@ impl TimeType {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeType> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<bool> = None;
@@ -2198,6 +2243,7 @@ impl TimeType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("TimeType");
@@ -2270,6 +2316,7 @@ impl IntType {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<IntType> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i8> = None;
@@ -2318,6 +2365,7 @@ impl IntType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("IntType");
@@ -2368,6 +2416,7 @@ impl JsonType {
     let ret = JsonType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<JsonType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -2395,6 +2444,7 @@ impl JsonType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("JsonType");
@@ -2445,6 +2495,7 @@ impl BsonType {
     let ret = BsonType {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BsonType> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -2472,6 +2523,7 @@ impl BsonType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("BsonType");
@@ -2647,6 +2699,7 @@ impl LogicalType {
       ))
     }
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<LogicalType> {
     let mut ret: Option<LogicalType> = None;
     let mut received_field_count = 0;
@@ -2858,6 +2911,7 @@ impl LogicalType {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("LogicalType");
     let mut written = o_prot.write_struct_begin(&struct_ident).await?;
@@ -3078,6 +3132,7 @@ impl SchemaElement {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SchemaElement> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Type> = None;
@@ -3215,6 +3270,7 @@ impl SchemaElement {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("SchemaElement");
@@ -3356,6 +3412,7 @@ impl DataPageHeader {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeader> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
@@ -3435,6 +3492,7 @@ impl DataPageHeader {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("DataPageHeader");
@@ -3493,6 +3551,7 @@ impl IndexPageHeader {
     let ret = IndexPageHeader {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<IndexPageHeader> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -3520,6 +3579,7 @@ impl IndexPageHeader {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("IndexPageHeader");
@@ -3602,6 +3662,7 @@ impl DictionaryPageHeader {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DictionaryPageHeader> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
@@ -3661,6 +3722,7 @@ impl DictionaryPageHeader {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("DictionaryPageHeader");
@@ -3802,6 +3864,7 @@ impl DataPageHeaderV2 {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeaderV2> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
@@ -3912,6 +3975,7 @@ impl DataPageHeaderV2 {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("DataPageHeaderV2");
@@ -3982,6 +4046,7 @@ impl SplitBlockAlgorithm {
     let ret = SplitBlockAlgorithm {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SplitBlockAlgorithm> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -4009,6 +4074,7 @@ impl SplitBlockAlgorithm {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("SplitBlockAlgorithm");
@@ -4088,6 +4154,7 @@ impl BloomFilterAlgorithm {
       ))
     }
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterAlgorithm> {
     let mut ret: Option<BloomFilterAlgorithm> = None;
     let mut received_field_count = 0;
@@ -4155,6 +4222,7 @@ impl BloomFilterAlgorithm {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("BloomFilterAlgorithm");
     let mut written = o_prot.write_struct_begin(&struct_ident).await?;
@@ -4205,6 +4273,7 @@ impl XxHash {
     let ret = XxHash {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<XxHash> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -4232,6 +4301,7 @@ impl XxHash {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("XxHash");
@@ -4311,6 +4381,7 @@ impl BloomFilterHash {
       ))
     }
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHash> {
     let mut ret: Option<BloomFilterHash> = None;
     let mut received_field_count = 0;
@@ -4378,6 +4449,7 @@ impl BloomFilterHash {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("BloomFilterHash");
     let mut written = o_prot.write_struct_begin(&struct_ident).await?;
@@ -4427,6 +4499,7 @@ impl Uncompressed {
     let ret = Uncompressed {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Uncompressed> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -4454,6 +4527,7 @@ impl Uncompressed {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("Uncompressed");
@@ -4533,6 +4607,7 @@ impl BloomFilterCompression {
       ))
     }
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterCompression> {
     let mut ret: Option<BloomFilterCompression> = None;
     let mut received_field_count = 0;
@@ -4600,6 +4675,7 @@ impl BloomFilterCompression {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("BloomFilterCompression");
     let mut written = o_prot.write_struct_begin(&struct_ident).await?;
@@ -4692,6 +4768,7 @@ impl BloomFilterHeader {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHeader> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
@@ -4760,6 +4837,7 @@ impl BloomFilterHeader {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("BloomFilterHeader");
@@ -4911,6 +4989,7 @@ impl PageHeader {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageHeader> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<PageType> = None;
@@ -5024,6 +5103,7 @@ impl PageHeader {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("PageHeader");
@@ -5119,6 +5199,7 @@ impl KeyValue {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<KeyValue> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<String> = None;
@@ -5168,6 +5249,7 @@ impl KeyValue {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("KeyValue");
@@ -5251,6 +5333,7 @@ impl SortingColumn {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SortingColumn> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
@@ -5309,6 +5392,7 @@ impl SortingColumn {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("SortingColumn");
@@ -5392,6 +5476,7 @@ impl PageEncodingStats {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageEncodingStats> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<PageType> = None;
@@ -5450,6 +5535,7 @@ impl PageEncodingStats {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("PageEncodingStats");
@@ -5665,6 +5751,7 @@ impl ColumnMetaData {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnMetaData> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Type> = None;
@@ -5879,6 +5966,7 @@ impl ColumnMetaData {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("ColumnMetaData");
@@ -5990,6 +6078,7 @@ impl EncryptionWithFooterKey {
     let ret = EncryptionWithFooterKey {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithFooterKey> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -6017,6 +6106,7 @@ impl EncryptionWithFooterKey {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("EncryptionWithFooterKey");
@@ -6091,6 +6181,7 @@ impl EncryptionWithColumnKey {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithColumnKey> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Vec<String>> = None;
@@ -6150,6 +6241,7 @@ impl EncryptionWithColumnKey {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("EncryptionWithColumnKey");
@@ -6243,6 +6335,7 @@ impl ColumnCryptoMetaData {
       ))
     }
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnCryptoMetaData> {
     let mut ret: Option<ColumnCryptoMetaData> = None;
     let mut received_field_count = 0;
@@ -6322,6 +6415,7 @@ impl ColumnCryptoMetaData {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("ColumnCryptoMetaData");
     let mut written = o_prot.write_struct_begin(&struct_ident).await?;
@@ -6463,6 +6557,7 @@ impl ColumnChunk {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnChunk> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<String> = None;
@@ -6589,6 +6684,7 @@ impl ColumnChunk {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("ColumnChunk");
@@ -6758,6 +6854,7 @@ impl RowGroup {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<RowGroup> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Vec<ColumnChunk>> = None;
@@ -6880,6 +6977,7 @@ impl RowGroup {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("RowGroup");
@@ -6959,6 +7057,7 @@ impl TypeDefinedOrder {
     let ret = TypeDefinedOrder {};
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TypeDefinedOrder> {
     i_prot.read_struct_begin().await?;
     loop {
@@ -6986,6 +7085,7 @@ impl TypeDefinedOrder {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("TypeDefinedOrder");
@@ -7065,6 +7165,7 @@ impl ColumnOrder {
       ))
     }
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnOrder> {
     let mut ret: Option<ColumnOrder> = None;
     let mut received_field_count = 0;
@@ -7132,6 +7233,7 @@ impl ColumnOrder {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("ColumnOrder");
     let mut written = o_prot.write_struct_begin(&struct_ident).await?;
@@ -7213,6 +7315,7 @@ impl PageLocation {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageLocation> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i64> = None;
@@ -7271,6 +7374,7 @@ impl PageLocation {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("PageLocation");
@@ -7340,6 +7444,7 @@ impl OffsetIndex {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<OffsetIndex> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Vec<PageLocation>> = None;
@@ -7388,6 +7493,7 @@ impl OffsetIndex {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("OffsetIndex");
@@ -7526,6 +7632,7 @@ impl ColumnIndex {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnIndex> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Vec<bool>> = None;
@@ -7645,6 +7752,7 @@ impl ColumnIndex {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("ColumnIndex");
@@ -7749,6 +7857,7 @@ impl AesGcmV1 {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmV1> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Vec<u8>> = None;
@@ -7810,6 +7919,7 @@ impl AesGcmV1 {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("AesGcmV1");
@@ -7906,6 +8016,7 @@ impl AesGcmCtrV1 {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmCtrV1> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<Vec<u8>> = None;
@@ -7967,6 +8078,7 @@ impl AesGcmCtrV1 {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("AesGcmCtrV1");
@@ -8073,6 +8185,7 @@ impl EncryptionAlgorithm {
       ))
     }
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionAlgorithm> {
     let mut ret: Option<EncryptionAlgorithm> = None;
     let mut received_field_count = 0;
@@ -8152,6 +8265,7 @@ impl EncryptionAlgorithm {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("EncryptionAlgorithm");
     let mut written = o_prot.write_struct_begin(&struct_ident).await?;
@@ -8340,6 +8454,7 @@ impl FileMetaData {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FileMetaData> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
@@ -8503,6 +8618,7 @@ impl FileMetaData {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("FileMetaData");
@@ -8622,6 +8738,7 @@ impl FileCryptoMetaData {
     };
     Ok(ret)
   }
+  #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FileCryptoMetaData> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<EncryptionAlgorithm> = None;
@@ -8671,6 +8788,7 @@ impl FileCryptoMetaData {
     written += o_prot.write_struct_end()?;
     Ok(written)
   }
+  #[cfg(feature = "async")]
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("FileCryptoMetaData");
