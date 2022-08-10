@@ -16,47 +16,6 @@
 // under the License.
 
 //! Types used to send and receive primitives between a Thrift client and server.
-//!
-//! # Examples
-//!
-//! Create and use a `TInputProtocol`.
-//!
-//! ```no_run
-//! use thrift::protocol::{TBinaryInputProtocol, TInputProtocol};
-//! use thrift::transport::TTcpChannel;
-//!
-//! // create the I/O channel
-//! let mut channel = TTcpChannel::new();
-//! channel.open("127.0.0.1:9090").unwrap();
-//!
-//! // create the protocol to decode bytes into types
-//! let mut protocol = TBinaryInputProtocol::new(channel, true);
-//!
-//! // read types from the wire
-//! let field_identifier = protocol.read_field_begin().unwrap();
-//! let field_contents = protocol.read_string().unwrap();
-//! let field_end = protocol.read_field_end().unwrap();
-//! ```
-//!
-//! Create and use a `TOutputProtocol`.
-//!
-//! ```no_run
-//! use thrift::protocol::{TBinaryOutputProtocol, TFieldIdentifier, TOutputProtocol, TType};
-//! use thrift::transport::TTcpChannel;
-//!
-//! // create the I/O channel
-//! let mut channel = TTcpChannel::new();
-//! channel.open("127.0.0.1:9090").unwrap();
-//!
-//! // create the protocol to encode types into bytes
-//! let mut protocol = TBinaryOutputProtocol::new(channel, true);
-//!
-//! // write types
-//! protocol.write_field_begin(&TFieldIdentifier::new("string_thing", TType::String, 1)).unwrap();
-//! protocol.write_string("foo").unwrap();
-//! protocol.write_field_end().unwrap();
-//! ```
-
 use std::convert::{From, TryFrom};
 use std::fmt;
 use std::fmt::{Display, Formatter};
@@ -65,13 +24,15 @@ use crate::thrift::{ApplicationError, Error, ProtocolError, ProtocolErrorKind};
 
 mod compact;
 mod compact_stream;
+mod compact_write;
 pub use compact_stream::TCompactInputStreamProtocol;
 mod compact_stream_write;
 pub use compact_stream_write::TCompactOutputStreamProtocol;
 mod stream;
 pub use stream::{TInputStreamProtocol, TOutputStreamProtocol};
 
-pub use self::compact::{TCompactInputProtocol, TCompactOutputProtocol};
+pub use compact::TCompactInputProtocol;
+pub use compact_write::TCompactOutputProtocol;
 
 // Default maximum depth to which `TInputProtocol::skip` will skip a Thrift
 // field. A default is necessary because Thrift structs or collections may
@@ -89,24 +50,6 @@ const MAXIMUM_SKIP_DEPTH: i8 = 64;
 ///
 /// All methods return a `thrift::Result`. If an `Err` is returned the protocol
 /// instance and its underlying transport should be terminated.
-///
-/// # Examples
-///
-/// Create and use a `TInputProtocol`
-///
-/// ```no_run
-/// use thrift::protocol::{TBinaryInputProtocol, TInputProtocol};
-/// use thrift::transport::TTcpChannel;
-///
-/// let mut channel = TTcpChannel::new();
-/// channel.open("127.0.0.1:9090").unwrap();
-///
-/// let mut protocol = TBinaryInputProtocol::new(channel, true);
-///
-/// let field_identifier = protocol.read_field_begin().unwrap();
-/// let field_contents = protocol.read_string().unwrap();
-/// let field_end = protocol.read_field_end().unwrap();
-/// ```
 pub trait TInputProtocol {
     /// Read the beginning of a Thrift message.
     fn read_message_begin(&mut self) -> crate::thrift::Result<TMessageIdentifier>;
@@ -238,24 +181,6 @@ pub trait TInputProtocol {
 ///
 /// All methods return a `thrift::Result`. If an `Err` is returned the protocol
 /// instance and its underlying transport should be terminated.
-///
-/// # Examples
-///
-/// Create and use a `TOutputProtocol`
-///
-/// ```no_run
-/// use thrift::protocol::{TBinaryOutputProtocol, TFieldIdentifier, TOutputProtocol, TType};
-/// use thrift::transport::TTcpChannel;
-///
-/// let mut channel = TTcpChannel::new();
-/// channel.open("127.0.0.1:9090").unwrap();
-///
-/// let mut protocol = TBinaryOutputProtocol::new(channel, true);
-///
-/// protocol.write_field_begin(&TFieldIdentifier::new("string_thing", TType::String, 1)).unwrap();
-/// protocol.write_string("foo").unwrap();
-/// protocol.write_field_end().unwrap();
-/// ```
 pub trait TOutputProtocol {
     /// Write the beginning of a Thrift message.
     fn write_message_begin(
@@ -518,7 +443,7 @@ pub struct TMessageIdentifier {
     /// Message type.
     pub message_type: TMessageType,
     /// Ordered sequence number identifying the message.
-    pub sequence_number: i32,
+    pub sequence_number: u32,
 }
 
 impl TMessageIdentifier {
@@ -527,7 +452,7 @@ impl TMessageIdentifier {
     pub fn new<S: Into<String>>(
         name: S,
         message_type: TMessageType,
-        sequence_number: i32,
+        sequence_number: u32,
     ) -> TMessageIdentifier {
         TMessageIdentifier {
             name: name.into(),
@@ -593,13 +518,13 @@ pub struct TListIdentifier {
     /// Type of the elements in the list.
     pub element_type: TType,
     /// Number of elements in the list.
-    pub size: i32,
+    pub size: u32,
 }
 
 impl TListIdentifier {
     /// Create a `TListIdentifier` for a list with `size` elements of type
     /// `element_type`.
-    pub fn new(element_type: TType, size: i32) -> TListIdentifier {
+    pub fn new(element_type: TType, size: u32) -> TListIdentifier {
         TListIdentifier { element_type, size }
     }
 }
@@ -610,13 +535,13 @@ pub struct TSetIdentifier {
     /// Type of the elements in the set.
     pub element_type: TType,
     /// Number of elements in the set.
-    pub size: i32,
+    pub size: u32,
 }
 
 impl TSetIdentifier {
     /// Create a `TSetIdentifier` for a set with `size` elements of type
     /// `element_type`.
-    pub fn new(element_type: TType, size: i32) -> TSetIdentifier {
+    pub fn new(element_type: TType, size: u32) -> TSetIdentifier {
         TSetIdentifier { element_type, size }
     }
 }
@@ -629,13 +554,13 @@ pub struct TMapIdentifier {
     /// Map value type.
     pub value_type: Option<TType>,
     /// Number of entries in the map.
-    pub size: i32,
+    pub size: u32,
 }
 
 impl TMapIdentifier {
     /// Create a `TMapIdentifier` for a map with `size` entries of type
     /// `key_type -> value_type`.
-    pub fn new<K, V>(key_type: K, value_type: V, size: i32) -> TMapIdentifier
+    pub fn new<K, V>(key_type: K, value_type: V, size: u32) -> TMapIdentifier
     where
         K: Into<Option<TType>>,
         V: Into<Option<TType>>,

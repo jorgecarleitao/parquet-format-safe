@@ -1,21 +1,4 @@
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements. See the NOTICE file
-// distributed with this work for additional information
-// regarding copyright ownership. The ASF licenses this file
-// to you under the Apache License, Version 2.0 (the
-// "License"); you may not use this file except in compliance
-// with the License. You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing,
-// software distributed under the License is distributed on an
-// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied. See the License for the
-// specific language governing permissions and limitations
-// under the License.
-
-use std::convert::{From, TryFrom};
+use std::convert::{From, TryFrom, TryInto};
 use std::io;
 
 use async_trait::async_trait;
@@ -33,7 +16,7 @@ use super::{TSetIdentifier, TStructIdentifier, TType};
 use crate::thrift::{Error, ProtocolError, ProtocolErrorKind, Result};
 
 #[derive(Debug)]
-pub struct TCompactInputStreamProtocol<T: Send> {
+pub struct TCompactInputStreamProtocol<R: Send> {
     // Identifier of the last field deserialized for a struct.
     last_read_field_id: i16,
     // Stack of the last read field ids (a new entry is added each time a nested struct is read).
@@ -42,40 +25,58 @@ pub struct TCompactInputStreamProtocol<T: Send> {
     // Saved because boolean fields and their value are encoded in a single byte,
     // and reading the field only occurs after the field id is read.
     pending_read_bool_value: Option<bool>,
-    // Underlying transport used for byte-level operations.
-    transport: T,
+    // Underlying reader used for byte-level operations.
+    reader: R,
+    // remaining bytes that can be read before refusing to read more
+    remaining: usize,
 }
 
-impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TCompactInputStreamProtocol<T> {
-    /// Create a `TCompactInputProtocol` that reads bytes from `transport`.
-    pub fn new(transport: T) -> Self {
+impl<R: VarIntAsyncReader + AsyncRead + Unpin + Send> TCompactInputStreamProtocol<R> {
+    /// Create a `TCompactInputProtocol` that reads bytes from `reader`.
+    pub fn new(reader: R, max_bytes: usize) -> Self {
         Self {
             last_read_field_id: 0,
             read_field_id_stack: Vec::new(),
             pending_read_bool_value: None,
-            transport,
+            remaining: max_bytes,
+            reader,
         }
     }
 
-    async fn read_list_set_begin(&mut self) -> Result<(TType, i32)> {
+    fn update_remaining<T>(&mut self, element: usize) -> Result<()> {
+        self.remaining = self
+            .remaining
+            .checked_sub((element).saturating_mul(std::mem::size_of::<T>()))
+            .ok_or_else(|| {
+                Error::Protocol(ProtocolError {
+                    kind: ProtocolErrorKind::SizeLimit,
+                    message: "The thrift file would allocate more bytes than allowed".to_string(),
+                })
+            })?;
+        Ok(())
+    }
+
+    async fn read_list_set_begin(&mut self) -> Result<(TType, u32)> {
         let header = self.read_byte().await?;
         let element_type = collection_u8_to_type(header & 0x0F)?;
 
         let possible_element_count = (header & 0xF0) >> 4;
         let element_count = if possible_element_count != 15 {
             // high bits set high if count and type encoded separately
-            possible_element_count as i32
+            possible_element_count.into()
         } else {
-            self.transport.read_varint_async::<u32>().await? as i32
+            self.reader.read_varint_async::<u32>().await?
         };
+
+        self.update_remaining::<usize>(element_count.try_into()?)?;
 
         Ok((element_type, element_count))
     }
 }
 
 #[async_trait]
-impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
-    for TCompactInputStreamProtocol<T>
+impl<R: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
+    for TCompactInputStreamProtocol<R>
 {
     async fn read_message_begin(&mut self) -> Result<TMessageIdentifier> {
         let compact_id = self.read_byte().await?;
@@ -104,8 +105,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
 
         // NOTE: unsigned right shift will pad with 0s
         let message_type: TMessageType = TMessageType::try_from(type_and_byte >> 5)?;
-        // writing side wrote signed sequence number as u32 to avoid zigzag encoding
-        let sequence_number = self.transport.read_varint_async::<u32>().await? as i32;
+        let sequence_number = self.reader.read_varint_async::<u32>().await?;
         let service_call_name = self.read_string().await?;
 
         self.last_read_field_id = 0;
@@ -163,7 +163,13 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
             ),
             _ => {
                 if field_delta != 0 {
-                    self.last_read_field_id += field_delta as i16;
+                    self.last_read_field_id = self
+                        .last_read_field_id
+                        .checked_add(field_delta as i16)
+                        .ok_or(Error::Protocol(ProtocolError {
+                            kind: ProtocolErrorKind::DepthLimit,
+                            message: String::new(),
+                        }))?;
                 } else {
                     self.last_read_field_id = self.read_i16().await?;
                 };
@@ -199,13 +205,17 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
     }
 
     async fn read_bytes(&mut self) -> Result<Vec<u8>> {
-        let len = self.transport.read_varint_async::<u32>().await?;
-        let mut buf = vec![0u8; len as usize];
-        self.transport
-            .read_exact(&mut buf)
-            .await
-            .map_err(From::from)
-            .map(|_| buf)
+        let len = self.reader.read_varint_async::<u32>().await?;
+
+        self.update_remaining::<u8>(len.try_into()?)?;
+
+        let mut buf = vec![];
+        buf.try_reserve(len.try_into()?)?;
+        (&mut self.reader)
+            .take(len.try_into()?)
+            .read_to_end(&mut buf)
+            .await?;
+        Ok(buf)
     }
 
     async fn read_i8(&mut self) -> Result<i8> {
@@ -213,21 +223,21 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
     }
 
     async fn read_i16(&mut self) -> Result<i16> {
-        self.transport
+        self.reader
             .read_varint_async::<i16>()
             .await
             .map_err(From::from)
     }
 
     async fn read_i32(&mut self) -> Result<i32> {
-        self.transport
+        self.reader
             .read_varint_async::<i32>()
             .await
             .map_err(From::from)
     }
 
     async fn read_i64(&mut self) -> Result<i64> {
-        self.transport
+        self.reader
             .read_varint_async::<i64>()
             .await
             .map_err(From::from)
@@ -235,7 +245,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
 
     async fn read_double(&mut self) -> Result<f64> {
         let mut buf = [0; 8];
-        self.transport.read_exact(&mut buf).await?;
+        self.reader.read_exact(&mut buf).await?;
         let r = f64::from_le_bytes(buf);
         Ok(r)
     }
@@ -264,13 +274,14 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
     }
 
     async fn read_map_begin(&mut self) -> Result<TMapIdentifier> {
-        let element_count = self.transport.read_varint_async::<u32>().await? as i32;
+        let element_count = self.reader.read_varint_async::<u32>().await?;
         if element_count == 0 {
             Ok(TMapIdentifier::new(None, None, 0))
         } else {
             let type_header = self.read_byte().await?;
             let key_type = collection_u8_to_type((type_header & 0xF0) >> 4)?;
             let val_type = collection_u8_to_type(type_header & 0x0F)?;
+            self.update_remaining::<usize>(element_count.try_into()?)?;
             Ok(TMapIdentifier::new(key_type, val_type, element_count))
         }
     }
@@ -284,7 +295,7 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
 
     async fn read_byte(&mut self) -> Result<u8> {
         let mut buf = [0u8; 1];
-        self.transport
+        self.reader
             .read_exact(&mut buf)
             .await
             .map_err(From::from)
@@ -292,15 +303,15 @@ impl<T: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
     }
 }
 
-impl<T> AsyncSeek for TCompactInputStreamProtocol<T>
+impl<R> AsyncSeek for TCompactInputStreamProtocol<R>
 where
-    T: AsyncSeek + Unpin + Send,
+    R: AsyncSeek + Unpin + Send,
 {
     fn poll_seek(
         mut self: std::pin::Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
         pos: io::SeekFrom,
     ) -> std::task::Poll<io::Result<u64>> {
-        std::pin::Pin::new(&mut self.transport).poll_seek(cx, pos)
+        std::pin::Pin::new(&mut self.reader).poll_seek(cx, pos)
     }
 }
