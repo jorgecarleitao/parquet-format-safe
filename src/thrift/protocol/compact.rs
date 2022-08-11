@@ -40,7 +40,7 @@ where
     R: Read,
 {
     /// Create a [`TCompactInputProtocol`] that reads bytes from `reader`.
-    #[inline]
+
     pub fn new(reader: R, max_bytes: usize) -> Self {
         Self {
             last_read_field_id: 0,
@@ -64,7 +64,6 @@ where
         Ok(())
     }
 
-    #[inline]
     fn read_list_set_begin(&mut self) -> Result<(TType, u32)> {
         let header = self.read_byte()?;
         let element_type = collection_u8_to_type(header & 0x0F)?;
@@ -125,7 +124,6 @@ where
         ))
     }
 
-    #[inline]
     fn read_message_end(&mut self) -> Result<()> {
         Ok(())
     }
@@ -193,12 +191,10 @@ where
         }
     }
 
-    #[inline]
     fn read_field_end(&mut self) -> Result<()> {
         Ok(())
     }
 
-    #[inline]
     fn read_bool(&mut self) -> Result<bool> {
         match self.pending_read_bool_value.take() {
             Some(b) => Ok(b),
@@ -216,7 +212,6 @@ where
         }
     }
 
-    #[inline]
     fn read_bytes(&mut self) -> Result<Vec<u8>> {
         let len = self.reader.read_varint::<u32>()?;
 
@@ -231,34 +226,28 @@ where
         Ok(buf)
     }
 
-    #[inline]
     fn read_i8(&mut self) -> Result<i8> {
         self.read_byte().map(|i| i as i8)
     }
 
-    #[inline]
     fn read_i16(&mut self) -> Result<i16> {
         self.reader.read_varint::<i16>().map_err(From::from)
     }
 
-    #[inline]
     fn read_i32(&mut self) -> Result<i32> {
         self.reader.read_varint::<i32>().map_err(From::from)
     }
 
-    #[inline]
     fn read_i64(&mut self) -> Result<i64> {
         self.reader.read_varint::<i64>().map_err(From::from)
     }
 
-    #[inline]
     fn read_double(&mut self) -> Result<f64> {
         let mut data = [0u8; 8];
         self.reader.read_exact(&mut data)?;
         Ok(f64::from_le_bytes(data))
     }
 
-    #[inline]
     fn read_string(&mut self) -> Result<String> {
         let bytes = self.read_bytes()?;
         String::from_utf8(bytes).map_err(From::from)
@@ -269,7 +258,6 @@ where
         Ok(TListIdentifier::new(element_type, element_count))
     }
 
-    #[inline]
     fn read_list_end(&mut self) -> Result<()> {
         Ok(())
     }
@@ -279,12 +267,10 @@ where
         Ok(TSetIdentifier::new(element_type, element_count))
     }
 
-    #[inline]
     fn read_set_end(&mut self) -> Result<()> {
         Ok(())
     }
 
-    #[inline]
     fn read_map_begin(&mut self) -> Result<TMapIdentifier> {
         let element_count = self.reader.read_varint::<u32>()?;
         if element_count == 0 {
@@ -298,7 +284,6 @@ where
         }
     }
 
-    #[inline]
     fn read_map_end(&mut self) -> Result<()> {
         Ok(())
     }
@@ -306,7 +291,6 @@ where
     // utility
     //
 
-    #[inline]
     fn read_byte(&mut self) -> Result<u8> {
         let mut buf = [0u8; 1];
         self.reader
