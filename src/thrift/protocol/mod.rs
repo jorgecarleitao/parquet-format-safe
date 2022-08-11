@@ -34,7 +34,7 @@ pub use compact_write::TCompactOutputProtocol;
 mod stream;
 #[cfg(feature = "async")]
 #[cfg_attr(docsrs, doc(cfg(feature = "async")))]
-pub use stream::{TInputStreamProtocol, TOutputStreamProtocol};
+pub use stream::{AsyncReadThrift, TInputStreamProtocol, TOutputStreamProtocol};
 
 #[cfg(feature = "async")]
 #[cfg_attr(docsrs, doc(cfg(feature = "async")))]
@@ -56,6 +56,40 @@ pub use compact_stream_write::TCompactOutputStreamProtocol;
 // recursion.
 const MAXIMUM_SKIP_DEPTH: i8 = 64;
 
+pub trait ReadThrift: Sized {
+    fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> crate::thrift::Result<Self>;
+}
+
+impl ReadThrift for String {
+    fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> crate::thrift::Result<Self> {
+        i_prot.read_string()
+    }
+}
+
+impl ReadThrift for bool {
+    fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> crate::thrift::Result<Self> {
+        i_prot.read_bool()
+    }
+}
+
+impl ReadThrift for u8 {
+    fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> crate::thrift::Result<Self> {
+        i_prot.read_byte()
+    }
+}
+
+impl ReadThrift for i64 {
+    fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> crate::thrift::Result<Self> {
+        i_prot.read_i64()
+    }
+}
+
+impl ReadThrift for Vec<u8> {
+    fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> crate::thrift::Result<Self> {
+        i_prot.read_bytes()
+    }
+}
+
 /// Converts a stream of bytes into Thrift identifiers, primitives,
 /// containers, or structs.
 ///
@@ -66,7 +100,7 @@ const MAXIMUM_SKIP_DEPTH: i8 = 64;
 ///
 /// All methods return a `thrift::Result`. If an `Err` is returned the protocol
 /// instance and its underlying transport should be terminated.
-pub trait TInputProtocol {
+pub trait TInputProtocol: Sized {
     /// Read the beginning of a Thrift message.
     fn read_message_begin(&mut self) -> crate::thrift::Result<TMessageIdentifier>;
     /// Read the end of a Thrift message.
@@ -173,6 +207,16 @@ pub trait TInputProtocol {
                 message: format!("cannot skip field type {:?}", &u),
             })),
         }
+    }
+
+    fn read_list<P: ReadThrift>(&mut self) -> crate::thrift::Result<Vec<P>> {
+        let list_ident = self.read_list_begin()?;
+        let mut val: Vec<P> = Vec::with_capacity(list_ident.size as usize);
+        for _ in 0..list_ident.size {
+            val.push(P::read_from_in_protocol(self)?);
+        }
+        self.read_list_end()?;
+        Ok(val)
     }
 
     // utility (DO NOT USE IN GENERATED CODE!!!!)
