@@ -86,7 +86,6 @@ impl<R> TInputProtocol for TCompactInputProtocol<R>
 where
     R: Read,
 {
-    #[inline]
     fn read_message_begin(&mut self) -> Result<TMessageIdentifier> {
         let compact_id = self.read_byte()?;
         if compact_id != COMPACT_PROTOCOL_ID {
@@ -131,7 +130,6 @@ where
         Ok(())
     }
 
-    #[inline]
     fn read_struct_begin(&mut self) -> Result<Option<TStructIdentifier>> {
         self.update_remaining::<i16>(1)?;
         self.read_field_id_stack.push(self.last_read_field_id);
@@ -139,7 +137,6 @@ where
         Ok(None)
     }
 
-    #[inline]
     fn read_struct_end(&mut self) -> Result<()> {
         self.last_read_field_id = self
             .read_field_id_stack
@@ -148,7 +145,6 @@ where
         Ok(())
     }
 
-    #[inline]
     fn read_field_begin(&mut self) -> Result<TFieldIdentifier> {
         // we can read at least one byte, which is:
         // - the type
@@ -268,7 +264,6 @@ where
         String::from_utf8(bytes).map_err(From::from)
     }
 
-    #[inline]
     fn read_list_begin(&mut self) -> Result<TListIdentifier> {
         let (element_type, element_count) = self.read_list_set_begin()?;
         Ok(TListIdentifier::new(element_type, element_count))
@@ -279,7 +274,6 @@ where
         Ok(())
     }
 
-    #[inline]
     fn read_set_begin(&mut self) -> Result<TSetIdentifier> {
         let (element_type, element_count) = self.read_list_set_begin()?;
         Ok(TSetIdentifier::new(element_type, element_count))
