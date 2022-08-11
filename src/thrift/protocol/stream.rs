@@ -22,7 +22,59 @@ use crate::thrift::{Error, ProtocolError, ProtocolErrorKind, Result};
 use super::*;
 
 #[async_trait]
-pub trait TInputStreamProtocol: Send {
+pub trait AsyncReadThrift: Send + Sized {
+    async fn stream_from_in_protocol<T: TInputStreamProtocol>(
+        i_prot: &mut T,
+    ) -> crate::thrift::Result<Self>;
+}
+
+#[async_trait]
+impl AsyncReadThrift for String {
+    async fn stream_from_in_protocol<T: TInputStreamProtocol>(
+        i_prot: &mut T,
+    ) -> crate::thrift::Result<Self> {
+        i_prot.read_string().await
+    }
+}
+
+#[async_trait]
+impl AsyncReadThrift for bool {
+    async fn stream_from_in_protocol<T: TInputStreamProtocol>(
+        i_prot: &mut T,
+    ) -> crate::thrift::Result<Self> {
+        i_prot.read_bool().await
+    }
+}
+
+#[async_trait]
+impl AsyncReadThrift for u8 {
+    async fn stream_from_in_protocol<T: TInputStreamProtocol>(
+        i_prot: &mut T,
+    ) -> crate::thrift::Result<Self> {
+        i_prot.read_byte().await
+    }
+}
+
+#[async_trait]
+impl AsyncReadThrift for i64 {
+    async fn stream_from_in_protocol<T: TInputStreamProtocol>(
+        i_prot: &mut T,
+    ) -> crate::thrift::Result<Self> {
+        i_prot.read_i64().await
+    }
+}
+
+#[async_trait]
+impl AsyncReadThrift for Vec<u8> {
+    async fn stream_from_in_protocol<T: TInputStreamProtocol>(
+        i_prot: &mut T,
+    ) -> crate::thrift::Result<Self> {
+        i_prot.read_bytes().await
+    }
+}
+
+#[async_trait]
+pub trait TInputStreamProtocol: Send + Sized {
     /// Read the beginning of a Thrift message.
     async fn read_message_begin(&mut self) -> Result<TMessageIdentifier>;
     /// Read the end of a Thrift message.
@@ -63,6 +115,16 @@ pub trait TInputStreamProtocol: Send {
     async fn read_map_begin(&mut self) -> Result<TMapIdentifier>;
     /// Read the end of a map.
     async fn read_map_end(&mut self) -> Result<()>;
+
+    async fn read_list<P: AsyncReadThrift>(&mut self) -> crate::thrift::Result<Vec<P>> {
+        let list_ident = self.read_list_begin().await?;
+        let mut val: Vec<P> = Vec::with_capacity(list_ident.size as usize);
+        for _ in 0..list_ident.size {
+            val.push(P::stream_from_in_protocol(self).await?);
+        }
+        self.read_list_end().await?;
+        Ok(val)
+    }
 
     /// Skip a field with type `field_type` recursively until the default
     /// maximum skip depth is reached.

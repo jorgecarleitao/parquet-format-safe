@@ -78,8 +78,8 @@ impl Error {
     /// Create an `ApplicationError` from its wire representation.
     ///
     /// Application code **should never** call this method directly.
-    pub fn read_application_error_from_in_protocol(
-        i: &mut dyn TInputProtocol,
+    pub fn read_application_error_from_in_protocol<T: TInputProtocol>(
+        i: &mut T,
     ) -> crate::thrift::Result<ApplicationError> {
         let mut message = "general remote error".to_owned();
         let mut kind = ApplicationErrorKind::Unknown;

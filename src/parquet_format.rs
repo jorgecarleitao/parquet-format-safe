@@ -6,12 +6,14 @@
 use std::convert::{From, TryInto};
 use std::default::Default;
 
+#[cfg(feature = "async")]
+use async_trait::async_trait;
 use crate::thrift;
 
 use thrift::{ProtocolError, ProtocolErrorKind};
-use thrift::protocol::{TFieldIdentifier, TListIdentifier, TInputProtocol, TOutputProtocol, TStructIdentifier, TType};
+use thrift::protocol::{ReadThrift, TFieldIdentifier, TListIdentifier, TInputProtocol, TOutputProtocol, TStructIdentifier, TType};
 #[cfg(feature = "async")]
-use thrift::protocol::{TInputStreamProtocol, TOutputStreamProtocol};
+use thrift::protocol::{AsyncReadThrift, TInputStreamProtocol, TOutputStreamProtocol};
 use thrift::protocol::field_id;
 use thrift::protocol::verify_required_field_exists;
 
@@ -50,12 +52,19 @@ impl Type {
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
-  pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<Type> {
+}
+
+impl ReadThrift for Type {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<Type> {
     let enum_value = i_prot.read_i32()?;
     Ok(Type::from(enum_value))
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Type> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for Type {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Type> {
     let enum_value = i_prot.read_i32().await?;
     Ok(Type::from(enum_value))
   }
@@ -226,12 +235,19 @@ impl ConvertedType {
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
-  pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ConvertedType> {
+}
+
+impl ReadThrift for ConvertedType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ConvertedType> {
     let enum_value = i_prot.read_i32()?;
     Ok(ConvertedType::from(enum_value))
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ConvertedType> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for ConvertedType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ConvertedType> {
     let enum_value = i_prot.read_i32().await?;
     Ok(ConvertedType::from(enum_value))
   }
@@ -310,12 +326,19 @@ impl FieldRepetitionType {
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
-  pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<FieldRepetitionType> {
+}
+
+impl ReadThrift for FieldRepetitionType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<FieldRepetitionType> {
     let enum_value = i_prot.read_i32()?;
     Ok(FieldRepetitionType::from(enum_value))
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FieldRepetitionType> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for FieldRepetitionType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FieldRepetitionType> {
     let enum_value = i_prot.read_i32().await?;
     Ok(FieldRepetitionType::from(enum_value))
   }
@@ -415,12 +438,19 @@ impl Encoding {
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
-  pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<Encoding> {
+}
+
+impl ReadThrift for Encoding {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<Encoding> {
     let enum_value = i_prot.read_i32()?;
     Ok(Encoding::from(enum_value))
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Encoding> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for Encoding {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Encoding> {
     let enum_value = i_prot.read_i32().await?;
     Ok(Encoding::from(enum_value))
   }
@@ -499,12 +529,19 @@ impl CompressionCodec {
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
-  pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<CompressionCodec> {
+}
+
+impl ReadThrift for CompressionCodec {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<CompressionCodec> {
     let enum_value = i_prot.read_i32()?;
     Ok(CompressionCodec::from(enum_value))
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<CompressionCodec> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for CompressionCodec {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<CompressionCodec> {
     let enum_value = i_prot.read_i32().await?;
     Ok(CompressionCodec::from(enum_value))
   }
@@ -567,12 +604,19 @@ impl PageType {
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
-  pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<PageType> {
+}
+
+impl ReadThrift for PageType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<PageType> {
     let enum_value = i_prot.read_i32()?;
     Ok(PageType::from(enum_value))
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageType> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for PageType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageType> {
     let enum_value = i_prot.read_i32().await?;
     Ok(PageType::from(enum_value))
   }
@@ -631,12 +675,19 @@ impl BoundaryOrder {
   pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     o_prot.write_i32(self.0).await
   }
-  pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BoundaryOrder> {
+}
+
+impl ReadThrift for BoundaryOrder {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BoundaryOrder> {
     let enum_value = i_prot.read_i32()?;
     Ok(BoundaryOrder::from(enum_value))
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BoundaryOrder> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for BoundaryOrder {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BoundaryOrder> {
     let enum_value = i_prot.read_i32().await?;
     Ok(BoundaryOrder::from(enum_value))
   }
@@ -715,119 +766,16 @@ impl Statistics {
       min_value: min_value.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<Statistics> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Vec<u8>> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    let mut f_3: Option<i64> = None;
-    let mut f_4: Option<i64> = None;
-    let mut f_5: Option<Vec<u8>> = None;
-    let mut f_6: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_bytes()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i64()?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = i_prot.read_i64()?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_bytes()?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_bytes()?;
-          f_6 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = Statistics {
-      max: f_1,
-      min: f_2,
-      null_count: f_3,
-      distinct_count: f_4,
-      max_value: f_5,
-      min_value: f_6,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Statistics> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Vec<u8>> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    let mut f_3: Option<i64> = None;
-    let mut f_4: Option<i64> = None;
-    let mut f_5: Option<Vec<u8>> = None;
-    let mut f_6: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_bytes().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i64().await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = i_prot.read_i64().await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_bytes().await?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_bytes().await?;
-          f_6 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = Statistics {
-      max: f_1,
-      min: f_2,
-      null_count: f_3,
-      distinct_count: f_4,
-      max_value: f_5,
-      min_value: f_6,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("Statistics");
@@ -907,6 +855,126 @@ impl Statistics {
   }
 }
 
+impl ReadThrift for Statistics {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<Statistics> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Vec<u8>> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    let mut f_3: Option<i64> = None;
+    let mut f_4: Option<i64> = None;
+    let mut f_5: Option<Vec<u8>> = None;
+    let mut f_6: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_bytes()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i64()?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_i64()?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_bytes()?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_bytes()?;
+          f_6 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = Statistics {
+      max: f_1,
+      min: f_2,
+      null_count: f_3,
+      distinct_count: f_4,
+      max_value: f_5,
+      min_value: f_6,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for Statistics {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Statistics> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Vec<u8>> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    let mut f_3: Option<i64> = None;
+    let mut f_4: Option<i64> = None;
+    let mut f_5: Option<Vec<u8>> = None;
+    let mut f_6: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_bytes().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i64().await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_i64().await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_bytes().await?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_bytes().await?;
+          f_6 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = Statistics {
+      max: f_1,
+      min: f_2,
+      null_count: f_3,
+      distinct_count: f_4,
+      max_value: f_5,
+      min_value: f_6,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // StringType
 //
@@ -920,37 +988,16 @@ impl StringType {
   pub fn new() -> StringType {
     StringType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<StringType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = StringType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<StringType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = StringType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("StringType");
@@ -967,6 +1014,44 @@ impl StringType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for StringType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<StringType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = StringType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for StringType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<StringType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = StringType {};
+    Ok(ret)
   }
 }
 
@@ -982,37 +1067,16 @@ impl UUIDType {
   pub fn new() -> UUIDType {
     UUIDType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<UUIDType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = UUIDType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<UUIDType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = UUIDType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("UUIDType");
@@ -1029,6 +1093,44 @@ impl UUIDType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for UUIDType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<UUIDType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = UUIDType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for UUIDType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<UUIDType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = UUIDType {};
+    Ok(ret)
   }
 }
 
@@ -1044,37 +1146,16 @@ impl MapType {
   pub fn new() -> MapType {
     MapType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<MapType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = MapType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MapType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = MapType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("MapType");
@@ -1091,6 +1172,44 @@ impl MapType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for MapType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<MapType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = MapType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for MapType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MapType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = MapType {};
+    Ok(ret)
   }
 }
 
@@ -1106,37 +1225,16 @@ impl ListType {
   pub fn new() -> ListType {
     ListType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ListType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = ListType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ListType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = ListType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("ListType");
@@ -1153,6 +1251,44 @@ impl ListType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for ListType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ListType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = ListType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for ListType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ListType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = ListType {};
+    Ok(ret)
   }
 }
 
@@ -1168,37 +1304,16 @@ impl EnumType {
   pub fn new() -> EnumType {
     EnumType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<EnumType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = EnumType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EnumType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = EnumType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("EnumType");
@@ -1215,6 +1330,44 @@ impl EnumType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for EnumType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<EnumType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = EnumType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for EnumType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EnumType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = EnumType {};
+    Ok(ret)
   }
 }
 
@@ -1230,37 +1383,16 @@ impl DateType {
   pub fn new() -> DateType {
     DateType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DateType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = DateType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DateType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = DateType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("DateType");
@@ -1277,6 +1409,44 @@ impl DateType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for DateType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DateType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = DateType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for DateType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DateType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = DateType {};
+    Ok(ret)
   }
 }
 
@@ -1297,37 +1467,16 @@ impl NullType {
   pub fn new() -> NullType {
     NullType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<NullType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = NullType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<NullType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = NullType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("NullType");
@@ -1344,6 +1493,44 @@ impl NullType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for NullType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<NullType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = NullType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for NullType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<NullType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = NullType {};
+    Ok(ret)
   }
 }
 
@@ -1370,7 +1557,49 @@ impl DecimalType {
       precision,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DecimalType> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DecimalType> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("DecimalType");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("scale", TType::I32, 1))?;
+    written += o_prot.write_i32(self.scale)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("precision", TType::I32, 2))?;
+    written += o_prot.write_i32(self.precision)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("DecimalType");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("scale", TType::I32, 1)).await?;
+    written += o_prot.write_i32(self.scale).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("precision", TType::I32, 2)).await?;
+    written += o_prot.write_i32(self.precision).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for DecimalType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DecimalType> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<i32> = None;
     let mut f_2: Option<i32> = None;
@@ -1404,8 +1633,12 @@ impl DecimalType {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DecimalType> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for DecimalType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DecimalType> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
     let mut f_2: Option<i32> = None;
@@ -1439,35 +1672,6 @@ impl DecimalType {
     };
     Ok(ret)
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("DecimalType");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("scale", TType::I32, 1))?;
-    written += o_prot.write_i32(self.scale)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("precision", TType::I32, 2))?;
-    written += o_prot.write_i32(self.precision)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("DecimalType");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("scale", TType::I32, 1)).await?;
-    written += o_prot.write_i32(self.scale).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("precision", TType::I32, 2)).await?;
-    written += o_prot.write_i32(self.precision).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -1483,37 +1687,16 @@ impl MilliSeconds {
   pub fn new() -> MilliSeconds {
     MilliSeconds {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<MilliSeconds> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = MilliSeconds {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MilliSeconds> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = MilliSeconds {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("MilliSeconds");
@@ -1530,6 +1713,44 @@ impl MilliSeconds {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for MilliSeconds {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<MilliSeconds> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = MilliSeconds {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for MilliSeconds {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MilliSeconds> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = MilliSeconds {};
+    Ok(ret)
   }
 }
 
@@ -1545,37 +1766,16 @@ impl MicroSeconds {
   pub fn new() -> MicroSeconds {
     MicroSeconds {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<MicroSeconds> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = MicroSeconds {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MicroSeconds> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = MicroSeconds {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("MicroSeconds");
@@ -1592,6 +1792,44 @@ impl MicroSeconds {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for MicroSeconds {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<MicroSeconds> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = MicroSeconds {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for MicroSeconds {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<MicroSeconds> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = MicroSeconds {};
+    Ok(ret)
   }
 }
 
@@ -1607,37 +1845,16 @@ impl NanoSeconds {
   pub fn new() -> NanoSeconds {
     NanoSeconds {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<NanoSeconds> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = NanoSeconds {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<NanoSeconds> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = NanoSeconds {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("NanoSeconds");
@@ -1657,6 +1874,44 @@ impl NanoSeconds {
   }
 }
 
+impl ReadThrift for NanoSeconds {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<NanoSeconds> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = NanoSeconds {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for NanoSeconds {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<NanoSeconds> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = NanoSeconds {};
+    Ok(ret)
+  }
+}
+
 //
 // TimeUnit
 //
@@ -1669,7 +1924,69 @@ pub enum TimeUnit {
 }
 
 impl TimeUnit {
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<TimeUnit> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeUnit> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("TimeUnit");
+    let mut written = o_prot.write_struct_begin(&struct_ident)?;
+    match *self {
+      TimeUnit::MILLIS(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("MILLIS", TType::Struct, 1))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+      TimeUnit::MICROS(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("MICROS", TType::Struct, 2))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+      TimeUnit::NANOS(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("NANOS", TType::Struct, 3))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("TimeUnit");
+    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
+    match *self {
+      TimeUnit::MILLIS(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("MILLIS", TType::Struct, 1)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+      TimeUnit::MICROS(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("MICROS", TType::Struct, 2)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+      TimeUnit::NANOS(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("NANOS", TType::Struct, 3)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for TimeUnit {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<TimeUnit> {
     let mut ret: Option<TimeUnit> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin()?;
@@ -1736,8 +2053,12 @@ impl TimeUnit {
       ))
     }
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeUnit> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for TimeUnit {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeUnit> {
     let mut ret: Option<TimeUnit> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin().await?;
@@ -1804,55 +2125,6 @@ impl TimeUnit {
       ))
     }
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("TimeUnit");
-    let mut written = o_prot.write_struct_begin(&struct_ident)?;
-    match *self {
-      TimeUnit::MILLIS(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("MILLIS", TType::Struct, 1))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-      TimeUnit::MICROS(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("MICROS", TType::Struct, 2))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-      TimeUnit::NANOS(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("NANOS", TType::Struct, 3))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("TimeUnit");
-    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
-    match *self {
-      TimeUnit::MILLIS(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("MILLIS", TType::Struct, 1)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-      TimeUnit::MICROS(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("MICROS", TType::Struct, 2)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-      TimeUnit::NANOS(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("NANOS", TType::Struct, 3)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -1875,7 +2147,49 @@ impl TimestampType {
       unit,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<TimestampType> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimestampType> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("TimestampType");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1))?;
+    written += o_prot.write_bool(self.is_adjusted_to_u_t_c)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("unit", TType::Struct, 2))?;
+    written += self.unit.write_to_out_protocol(o_prot)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("TimestampType");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1)).await?;
+    written += o_prot.write_bool(self.is_adjusted_to_u_t_c).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("unit", TType::Struct, 2)).await?;
+    written += self.unit.write_to_out_stream_protocol(o_prot).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for TimestampType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<TimestampType> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<bool> = None;
     let mut f_2: Option<TimeUnit> = None;
@@ -1909,8 +2223,12 @@ impl TimestampType {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimestampType> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for TimestampType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimestampType> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<bool> = None;
     let mut f_2: Option<TimeUnit> = None;
@@ -1943,35 +2261,6 @@ impl TimestampType {
       unit: f_2.expect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
-  }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("TimestampType");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1))?;
-    written += o_prot.write_bool(self.is_adjusted_to_u_t_c)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("unit", TType::Struct, 2))?;
-    written += self.unit.write_to_out_protocol(o_prot)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("TimestampType");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1)).await?;
-    written += o_prot.write_bool(self.is_adjusted_to_u_t_c).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("unit", TType::Struct, 2)).await?;
-    written += self.unit.write_to_out_stream_protocol(o_prot).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
   }
 }
 
@@ -1995,7 +2284,49 @@ impl TimeType {
       unit,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<TimeType> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeType> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("TimeType");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1))?;
+    written += o_prot.write_bool(self.is_adjusted_to_u_t_c)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("unit", TType::Struct, 2))?;
+    written += self.unit.write_to_out_protocol(o_prot)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("TimeType");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1)).await?;
+    written += o_prot.write_bool(self.is_adjusted_to_u_t_c).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("unit", TType::Struct, 2)).await?;
+    written += self.unit.write_to_out_stream_protocol(o_prot).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for TimeType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<TimeType> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<bool> = None;
     let mut f_2: Option<TimeUnit> = None;
@@ -2029,8 +2360,12 @@ impl TimeType {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeType> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for TimeType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TimeType> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<bool> = None;
     let mut f_2: Option<TimeUnit> = None;
@@ -2063,35 +2398,6 @@ impl TimeType {
       unit: f_2.expect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
-  }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("TimeType");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1))?;
-    written += o_prot.write_bool(self.is_adjusted_to_u_t_c)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("unit", TType::Struct, 2))?;
-    written += self.unit.write_to_out_protocol(o_prot)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("TimeType");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("isAdjustedToUTC", TType::Bool, 1)).await?;
-    written += o_prot.write_bool(self.is_adjusted_to_u_t_c).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("unit", TType::Struct, 2)).await?;
-    written += self.unit.write_to_out_stream_protocol(o_prot).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
   }
 }
 
@@ -2117,7 +2423,49 @@ impl IntType {
       is_signed,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<IntType> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<IntType> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("IntType");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("bitWidth", TType::I08, 1))?;
+    written += o_prot.write_i8(self.bit_width)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("isSigned", TType::Bool, 2))?;
+    written += o_prot.write_bool(self.is_signed)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("IntType");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("bitWidth", TType::I08, 1)).await?;
+    written += o_prot.write_i8(self.bit_width).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("isSigned", TType::Bool, 2)).await?;
+    written += o_prot.write_bool(self.is_signed).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for IntType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<IntType> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<i8> = None;
     let mut f_2: Option<bool> = None;
@@ -2151,8 +2499,12 @@ impl IntType {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<IntType> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for IntType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<IntType> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i8> = None;
     let mut f_2: Option<bool> = None;
@@ -2186,35 +2538,6 @@ impl IntType {
     };
     Ok(ret)
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("IntType");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("bitWidth", TType::I08, 1))?;
-    written += o_prot.write_i8(self.bit_width)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("isSigned", TType::Bool, 2))?;
-    written += o_prot.write_bool(self.is_signed)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("IntType");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("bitWidth", TType::I08, 1)).await?;
-    written += o_prot.write_i8(self.bit_width).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("isSigned", TType::Bool, 2)).await?;
-    written += o_prot.write_bool(self.is_signed).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -2232,37 +2555,16 @@ impl JsonType {
   pub fn new() -> JsonType {
     JsonType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<JsonType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = JsonType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<JsonType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = JsonType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("JsonType");
@@ -2279,6 +2581,44 @@ impl JsonType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for JsonType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<JsonType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = JsonType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for JsonType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<JsonType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = JsonType {};
+    Ok(ret)
   }
 }
 
@@ -2297,37 +2637,16 @@ impl BsonType {
   pub fn new() -> BsonType {
     BsonType {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BsonType> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = BsonType {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BsonType> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = BsonType {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("BsonType");
@@ -2344,6 +2663,44 @@ impl BsonType {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for BsonType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BsonType> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = BsonType {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for BsonType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BsonType> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = BsonType {};
+    Ok(ret)
   }
 }
 
@@ -2369,281 +2726,16 @@ pub enum LogicalType {
 }
 
 impl LogicalType {
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<LogicalType> {
-    let mut ret: Option<LogicalType> = None;
-    let mut received_field_count = 0;
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = StringType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::STRING(val));
-          }
-          received_field_count += 1;
-        },
-        2 => {
-          let val = MapType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::MAP(val));
-          }
-          received_field_count += 1;
-        },
-        3 => {
-          let val = ListType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::LIST(val));
-          }
-          received_field_count += 1;
-        },
-        4 => {
-          let val = EnumType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::ENUM(val));
-          }
-          received_field_count += 1;
-        },
-        5 => {
-          let val = DecimalType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::DECIMAL(val));
-          }
-          received_field_count += 1;
-        },
-        6 => {
-          let val = DateType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::DATE(val));
-          }
-          received_field_count += 1;
-        },
-        7 => {
-          let val = TimeType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::TIME(val));
-          }
-          received_field_count += 1;
-        },
-        8 => {
-          let val = TimestampType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::TIMESTAMP(val));
-          }
-          received_field_count += 1;
-        },
-        10 => {
-          let val = IntType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::INTEGER(val));
-          }
-          received_field_count += 1;
-        },
-        11 => {
-          let val = NullType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::UNKNOWN(val));
-          }
-          received_field_count += 1;
-        },
-        12 => {
-          let val = JsonType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::JSON(val));
-          }
-          received_field_count += 1;
-        },
-        13 => {
-          let val = BsonType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::BSON(val));
-          }
-          received_field_count += 1;
-        },
-        14 => {
-          let val = UUIDType::read_from_in_protocol(i_prot)?;
-          if ret.is_none() {
-            ret = Some(LogicalType::UUID(val));
-          }
-          received_field_count += 1;
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-          received_field_count += 1;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    if received_field_count == 0 {
-      Err(
-        thrift::Error::Protocol(
-          ProtocolError::new(
-            ProtocolErrorKind::InvalidData,
-            "received empty union from remote LogicalType"
-          )
-        )
-      )
-    } else if received_field_count > 1 {
-      Err(
-        thrift::Error::Protocol(
-          ProtocolError::new(
-            ProtocolErrorKind::InvalidData,
-            "received multiple fields for union from remote LogicalType"
-          )
-        )
-      )
-    } else {
-      ret.ok_or_else(|| thrift::Error::Protocol(
-        ProtocolError::new(
-          ProtocolErrorKind::InvalidData,
-          "received no field for union from remoteLogicalType"
-        )
-      ))
-    }
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<LogicalType> {
-    let mut ret: Option<LogicalType> = None;
-    let mut received_field_count = 0;
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = StringType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::STRING(val));
-          }
-          received_field_count += 1;
-        },
-        2 => {
-          let val = MapType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::MAP(val));
-          }
-          received_field_count += 1;
-        },
-        3 => {
-          let val = ListType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::LIST(val));
-          }
-          received_field_count += 1;
-        },
-        4 => {
-          let val = EnumType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::ENUM(val));
-          }
-          received_field_count += 1;
-        },
-        5 => {
-          let val = DecimalType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::DECIMAL(val));
-          }
-          received_field_count += 1;
-        },
-        6 => {
-          let val = DateType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::DATE(val));
-          }
-          received_field_count += 1;
-        },
-        7 => {
-          let val = TimeType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::TIME(val));
-          }
-          received_field_count += 1;
-        },
-        8 => {
-          let val = TimestampType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::TIMESTAMP(val));
-          }
-          received_field_count += 1;
-        },
-        10 => {
-          let val = IntType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::INTEGER(val));
-          }
-          received_field_count += 1;
-        },
-        11 => {
-          let val = NullType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::UNKNOWN(val));
-          }
-          received_field_count += 1;
-        },
-        12 => {
-          let val = JsonType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::JSON(val));
-          }
-          received_field_count += 1;
-        },
-        13 => {
-          let val = BsonType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::BSON(val));
-          }
-          received_field_count += 1;
-        },
-        14 => {
-          let val = UUIDType::stream_from_in_protocol(i_prot).await?;
-          if ret.is_none() {
-            ret = Some(LogicalType::UUID(val));
-          }
-          received_field_count += 1;
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-          received_field_count += 1;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    if received_field_count == 0 {
-      Err(
-        thrift::Error::Protocol(
-          ProtocolError::new(
-            ProtocolErrorKind::InvalidData,
-            "received empty union from remote LogicalType"
-          )
-        )
-      )
-    } else if received_field_count > 1 {
-      Err(
-        thrift::Error::Protocol(
-          ProtocolError::new(
-            ProtocolErrorKind::InvalidData,
-            "received multiple fields for union from remote LogicalType"
-          )
-        )
-      )
-    } else {
-      ret.ok_or_else(|| thrift::Error::Protocol(
-        ProtocolError::new(
-          ProtocolErrorKind::InvalidData,
-          "received no field for union from remoteLogicalType"
-        )
-      ))
-    }
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let struct_ident = TStructIdentifier::new("LogicalType");
     let mut written = o_prot.write_struct_begin(&struct_ident)?;
@@ -2795,6 +2887,288 @@ impl LogicalType {
   }
 }
 
+impl ReadThrift for LogicalType {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<LogicalType> {
+    let mut ret: Option<LogicalType> = None;
+    let mut received_field_count = 0;
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = StringType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::STRING(val));
+          }
+          received_field_count += 1;
+        },
+        2 => {
+          let val = MapType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::MAP(val));
+          }
+          received_field_count += 1;
+        },
+        3 => {
+          let val = ListType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::LIST(val));
+          }
+          received_field_count += 1;
+        },
+        4 => {
+          let val = EnumType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::ENUM(val));
+          }
+          received_field_count += 1;
+        },
+        5 => {
+          let val = DecimalType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::DECIMAL(val));
+          }
+          received_field_count += 1;
+        },
+        6 => {
+          let val = DateType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::DATE(val));
+          }
+          received_field_count += 1;
+        },
+        7 => {
+          let val = TimeType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::TIME(val));
+          }
+          received_field_count += 1;
+        },
+        8 => {
+          let val = TimestampType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::TIMESTAMP(val));
+          }
+          received_field_count += 1;
+        },
+        10 => {
+          let val = IntType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::INTEGER(val));
+          }
+          received_field_count += 1;
+        },
+        11 => {
+          let val = NullType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::UNKNOWN(val));
+          }
+          received_field_count += 1;
+        },
+        12 => {
+          let val = JsonType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::JSON(val));
+          }
+          received_field_count += 1;
+        },
+        13 => {
+          let val = BsonType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::BSON(val));
+          }
+          received_field_count += 1;
+        },
+        14 => {
+          let val = UUIDType::read_from_in_protocol(i_prot)?;
+          if ret.is_none() {
+            ret = Some(LogicalType::UUID(val));
+          }
+          received_field_count += 1;
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+          received_field_count += 1;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    if received_field_count == 0 {
+      Err(
+        thrift::Error::Protocol(
+          ProtocolError::new(
+            ProtocolErrorKind::InvalidData,
+            "received empty union from remote LogicalType"
+          )
+        )
+      )
+    } else if received_field_count > 1 {
+      Err(
+        thrift::Error::Protocol(
+          ProtocolError::new(
+            ProtocolErrorKind::InvalidData,
+            "received multiple fields for union from remote LogicalType"
+          )
+        )
+      )
+    } else {
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteLogicalType"
+        )
+      ))
+    }
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for LogicalType {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<LogicalType> {
+    let mut ret: Option<LogicalType> = None;
+    let mut received_field_count = 0;
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = StringType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::STRING(val));
+          }
+          received_field_count += 1;
+        },
+        2 => {
+          let val = MapType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::MAP(val));
+          }
+          received_field_count += 1;
+        },
+        3 => {
+          let val = ListType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::LIST(val));
+          }
+          received_field_count += 1;
+        },
+        4 => {
+          let val = EnumType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::ENUM(val));
+          }
+          received_field_count += 1;
+        },
+        5 => {
+          let val = DecimalType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::DECIMAL(val));
+          }
+          received_field_count += 1;
+        },
+        6 => {
+          let val = DateType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::DATE(val));
+          }
+          received_field_count += 1;
+        },
+        7 => {
+          let val = TimeType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::TIME(val));
+          }
+          received_field_count += 1;
+        },
+        8 => {
+          let val = TimestampType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::TIMESTAMP(val));
+          }
+          received_field_count += 1;
+        },
+        10 => {
+          let val = IntType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::INTEGER(val));
+          }
+          received_field_count += 1;
+        },
+        11 => {
+          let val = NullType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::UNKNOWN(val));
+          }
+          received_field_count += 1;
+        },
+        12 => {
+          let val = JsonType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::JSON(val));
+          }
+          received_field_count += 1;
+        },
+        13 => {
+          let val = BsonType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::BSON(val));
+          }
+          received_field_count += 1;
+        },
+        14 => {
+          let val = UUIDType::stream_from_in_protocol(i_prot).await?;
+          if ret.is_none() {
+            ret = Some(LogicalType::UUID(val));
+          }
+          received_field_count += 1;
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+          received_field_count += 1;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    if received_field_count == 0 {
+      Err(
+        thrift::Error::Protocol(
+          ProtocolError::new(
+            ProtocolErrorKind::InvalidData,
+            "received empty union from remote LogicalType"
+          )
+        )
+      )
+    } else if received_field_count > 1 {
+      Err(
+        thrift::Error::Protocol(
+          ProtocolError::new(
+            ProtocolErrorKind::InvalidData,
+            "received multiple fields for union from remote LogicalType"
+          )
+        )
+      )
+    } else {
+      ret.ok_or_else(|| thrift::Error::Protocol(
+        ProtocolError::new(
+          ProtocolErrorKind::InvalidData,
+          "received no field for union from remoteLogicalType"
+        )
+      ))
+    }
+  }
+}
+
 //
 // SchemaElement
 //
@@ -2858,169 +3232,16 @@ impl SchemaElement {
       logical_type: logical_type.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<SchemaElement> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Type> = None;
-    let mut f_2: Option<i32> = None;
-    let mut f_3: Option<FieldRepetitionType> = None;
-    let mut f_4: Option<String> = None;
-    let mut f_5: Option<i32> = None;
-    let mut f_6: Option<ConvertedType> = None;
-    let mut f_7: Option<i32> = None;
-    let mut f_8: Option<i32> = None;
-    let mut f_9: Option<i32> = None;
-    let mut f_10: Option<LogicalType> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = Type::read_from_in_protocol(i_prot)?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i32()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = FieldRepetitionType::read_from_in_protocol(i_prot)?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = i_prot.read_string()?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i32()?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = ConvertedType::read_from_in_protocol(i_prot)?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_i32()?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = i_prot.read_i32()?;
-          f_8 = Some(val);
-        },
-        9 => {
-          let val = i_prot.read_i32()?;
-          f_9 = Some(val);
-        },
-        10 => {
-          let val = LogicalType::read_from_in_protocol(i_prot)?;
-          f_10 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("SchemaElement.name", &f_4)?;
-    let ret = SchemaElement {
-      type_: f_1,
-      type_length: f_2,
-      repetition_type: f_3,
-      name: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      num_children: f_5,
-      converted_type: f_6,
-      scale: f_7,
-      precision: f_8,
-      field_id: f_9,
-      logical_type: f_10,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SchemaElement> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Type> = None;
-    let mut f_2: Option<i32> = None;
-    let mut f_3: Option<FieldRepetitionType> = None;
-    let mut f_4: Option<String> = None;
-    let mut f_5: Option<i32> = None;
-    let mut f_6: Option<ConvertedType> = None;
-    let mut f_7: Option<i32> = None;
-    let mut f_8: Option<i32> = None;
-    let mut f_9: Option<i32> = None;
-    let mut f_10: Option<LogicalType> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = Type::stream_from_in_protocol(i_prot).await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i32().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = FieldRepetitionType::stream_from_in_protocol(i_prot).await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = i_prot.read_string().await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i32().await?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = ConvertedType::stream_from_in_protocol(i_prot).await?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_i32().await?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = i_prot.read_i32().await?;
-          f_8 = Some(val);
-        },
-        9 => {
-          let val = i_prot.read_i32().await?;
-          f_9 = Some(val);
-        },
-        10 => {
-          let val = LogicalType::stream_from_in_protocol(i_prot).await?;
-          f_10 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("SchemaElement.name", &f_4)?;
-    let ret = SchemaElement {
-      type_: f_1,
-      type_length: f_2,
-      repetition_type: f_3,
-      name: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      num_children: f_5,
-      converted_type: f_6,
-      scale: f_7,
-      precision: f_8,
-      field_id: f_9,
-      logical_type: f_10,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("SchemaElement");
@@ -3136,6 +3357,176 @@ impl SchemaElement {
   }
 }
 
+impl ReadThrift for SchemaElement {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<SchemaElement> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Type> = None;
+    let mut f_2: Option<i32> = None;
+    let mut f_3: Option<FieldRepetitionType> = None;
+    let mut f_4: Option<String> = None;
+    let mut f_5: Option<i32> = None;
+    let mut f_6: Option<ConvertedType> = None;
+    let mut f_7: Option<i32> = None;
+    let mut f_8: Option<i32> = None;
+    let mut f_9: Option<i32> = None;
+    let mut f_10: Option<LogicalType> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = Type::read_from_in_protocol(i_prot)?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i32()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = FieldRepetitionType::read_from_in_protocol(i_prot)?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_string()?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i32()?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = ConvertedType::read_from_in_protocol(i_prot)?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_i32()?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = i_prot.read_i32()?;
+          f_8 = Some(val);
+        },
+        9 => {
+          let val = i_prot.read_i32()?;
+          f_9 = Some(val);
+        },
+        10 => {
+          let val = LogicalType::read_from_in_protocol(i_prot)?;
+          f_10 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("SchemaElement.name", &f_4)?;
+    let ret = SchemaElement {
+      type_: f_1,
+      type_length: f_2,
+      repetition_type: f_3,
+      name: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      num_children: f_5,
+      converted_type: f_6,
+      scale: f_7,
+      precision: f_8,
+      field_id: f_9,
+      logical_type: f_10,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for SchemaElement {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SchemaElement> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Type> = None;
+    let mut f_2: Option<i32> = None;
+    let mut f_3: Option<FieldRepetitionType> = None;
+    let mut f_4: Option<String> = None;
+    let mut f_5: Option<i32> = None;
+    let mut f_6: Option<ConvertedType> = None;
+    let mut f_7: Option<i32> = None;
+    let mut f_8: Option<i32> = None;
+    let mut f_9: Option<i32> = None;
+    let mut f_10: Option<LogicalType> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = Type::stream_from_in_protocol(i_prot).await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i32().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = FieldRepetitionType::stream_from_in_protocol(i_prot).await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_string().await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i32().await?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = ConvertedType::stream_from_in_protocol(i_prot).await?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_i32().await?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = i_prot.read_i32().await?;
+          f_8 = Some(val);
+        },
+        9 => {
+          let val = i_prot.read_i32().await?;
+          f_9 = Some(val);
+        },
+        10 => {
+          let val = LogicalType::stream_from_in_protocol(i_prot).await?;
+          f_10 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("SchemaElement.name", &f_4)?;
+    let ret = SchemaElement {
+      type_: f_1,
+      type_length: f_2,
+      repetition_type: f_3,
+      name: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      num_children: f_5,
+      converted_type: f_6,
+      scale: f_7,
+      precision: f_8,
+      field_id: f_9,
+      logical_type: f_10,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // DataPageHeader
 //
@@ -3165,115 +3556,16 @@ impl DataPageHeader {
       statistics: statistics.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeader> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<i32> = None;
-    let mut f_2: Option<Encoding> = None;
-    let mut f_3: Option<Encoding> = None;
-    let mut f_4: Option<Encoding> = None;
-    let mut f_5: Option<Statistics> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_i32()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = Encoding::read_from_in_protocol(i_prot)?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = Encoding::read_from_in_protocol(i_prot)?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = Encoding::read_from_in_protocol(i_prot)?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = Statistics::read_from_in_protocol(i_prot)?;
-          f_5 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("DataPageHeader.num_values", &f_1)?;
-    verify_required_field_exists("DataPageHeader.encoding", &f_2)?;
-    verify_required_field_exists("DataPageHeader.definition_level_encoding", &f_3)?;
-    verify_required_field_exists("DataPageHeader.repetition_level_encoding", &f_4)?;
-    let ret = DataPageHeader {
-      num_values: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      encoding: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      definition_level_encoding: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      repetition_level_encoding: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      statistics: f_5,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeader> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<i32> = None;
-    let mut f_2: Option<Encoding> = None;
-    let mut f_3: Option<Encoding> = None;
-    let mut f_4: Option<Encoding> = None;
-    let mut f_5: Option<Statistics> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_i32().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = Encoding::stream_from_in_protocol(i_prot).await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = Encoding::stream_from_in_protocol(i_prot).await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = Encoding::stream_from_in_protocol(i_prot).await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = Statistics::stream_from_in_protocol(i_prot).await?;
-          f_5 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("DataPageHeader.num_values", &f_1)?;
-    verify_required_field_exists("DataPageHeader.encoding", &f_2)?;
-    verify_required_field_exists("DataPageHeader.definition_level_encoding", &f_3)?;
-    verify_required_field_exists("DataPageHeader.repetition_level_encoding", &f_4)?;
-    let ret = DataPageHeader {
-      num_values: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      encoding: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      definition_level_encoding: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      repetition_level_encoding: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      statistics: f_5,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("DataPageHeader");
@@ -3327,6 +3619,122 @@ impl DataPageHeader {
   }
 }
 
+impl ReadThrift for DataPageHeader {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeader> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<i32> = None;
+    let mut f_2: Option<Encoding> = None;
+    let mut f_3: Option<Encoding> = None;
+    let mut f_4: Option<Encoding> = None;
+    let mut f_5: Option<Statistics> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_i32()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = Encoding::read_from_in_protocol(i_prot)?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = Encoding::read_from_in_protocol(i_prot)?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = Encoding::read_from_in_protocol(i_prot)?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = Statistics::read_from_in_protocol(i_prot)?;
+          f_5 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("DataPageHeader.num_values", &f_1)?;
+    verify_required_field_exists("DataPageHeader.encoding", &f_2)?;
+    verify_required_field_exists("DataPageHeader.definition_level_encoding", &f_3)?;
+    verify_required_field_exists("DataPageHeader.repetition_level_encoding", &f_4)?;
+    let ret = DataPageHeader {
+      num_values: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      encoding: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      definition_level_encoding: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      repetition_level_encoding: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      statistics: f_5,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for DataPageHeader {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeader> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<i32> = None;
+    let mut f_2: Option<Encoding> = None;
+    let mut f_3: Option<Encoding> = None;
+    let mut f_4: Option<Encoding> = None;
+    let mut f_5: Option<Statistics> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_i32().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = Encoding::stream_from_in_protocol(i_prot).await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = Encoding::stream_from_in_protocol(i_prot).await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = Encoding::stream_from_in_protocol(i_prot).await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = Statistics::stream_from_in_protocol(i_prot).await?;
+          f_5 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("DataPageHeader.num_values", &f_1)?;
+    verify_required_field_exists("DataPageHeader.encoding", &f_2)?;
+    verify_required_field_exists("DataPageHeader.definition_level_encoding", &f_3)?;
+    verify_required_field_exists("DataPageHeader.repetition_level_encoding", &f_4)?;
+    let ret = DataPageHeader {
+      num_values: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      encoding: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      definition_level_encoding: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      repetition_level_encoding: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      statistics: f_5,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // IndexPageHeader
 //
@@ -3339,37 +3747,16 @@ impl IndexPageHeader {
   pub fn new() -> IndexPageHeader {
     IndexPageHeader {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<IndexPageHeader> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = IndexPageHeader {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<IndexPageHeader> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = IndexPageHeader {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("IndexPageHeader");
@@ -3386,6 +3773,44 @@ impl IndexPageHeader {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for IndexPageHeader {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<IndexPageHeader> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = IndexPageHeader {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for IndexPageHeader {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<IndexPageHeader> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = IndexPageHeader {};
+    Ok(ret)
   }
 }
 
@@ -3415,7 +3840,59 @@ impl DictionaryPageHeader {
       is_sorted: is_sorted.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DictionaryPageHeader> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DictionaryPageHeader> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("DictionaryPageHeader");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("num_values", TType::I32, 1))?;
+    written += o_prot.write_i32(self.num_values)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding", TType::I32, 2))?;
+    written += self.encoding.write_to_out_protocol(o_prot)?;
+    written += o_prot.write_field_end()?;
+    if let Some(fld_var) = self.is_sorted {
+      written += o_prot.write_field_begin(&TFieldIdentifier::new("is_sorted", TType::Bool, 3))?;
+      written += o_prot.write_bool(fld_var)?;
+      written += o_prot.write_field_end()?;
+    }
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("DictionaryPageHeader");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("num_values", TType::I32, 1)).await?;
+    written += o_prot.write_i32(self.num_values).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding", TType::I32, 2)).await?;
+    written += self.encoding.write_to_out_stream_protocol(o_prot).await?;
+    written += o_prot.write_field_end()?;
+    if let Some(fld_var) = self.is_sorted {
+      written += o_prot.write_field_begin(&TFieldIdentifier::new("is_sorted", TType::Bool, 3)).await?;
+      written += o_prot.write_bool(fld_var).await?;
+      written += o_prot.write_field_end()?;
+    }
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for DictionaryPageHeader {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DictionaryPageHeader> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<i32> = None;
     let mut f_2: Option<Encoding> = None;
@@ -3455,8 +3932,12 @@ impl DictionaryPageHeader {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DictionaryPageHeader> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for DictionaryPageHeader {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DictionaryPageHeader> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
     let mut f_2: Option<Encoding> = None;
@@ -3495,45 +3976,6 @@ impl DictionaryPageHeader {
       is_sorted: f_3,
     };
     Ok(ret)
-  }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("DictionaryPageHeader");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("num_values", TType::I32, 1))?;
-    written += o_prot.write_i32(self.num_values)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding", TType::I32, 2))?;
-    written += self.encoding.write_to_out_protocol(o_prot)?;
-    written += o_prot.write_field_end()?;
-    if let Some(fld_var) = self.is_sorted {
-      written += o_prot.write_field_begin(&TFieldIdentifier::new("is_sorted", TType::Bool, 3))?;
-      written += o_prot.write_bool(fld_var)?;
-      written += o_prot.write_field_end()?;
-    }
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("DictionaryPageHeader");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("num_values", TType::I32, 1)).await?;
-    written += o_prot.write_i32(self.num_values).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding", TType::I32, 2)).await?;
-    written += self.encoding.write_to_out_stream_protocol(o_prot).await?;
-    written += o_prot.write_field_end()?;
-    if let Some(fld_var) = self.is_sorted {
-      written += o_prot.write_field_begin(&TFieldIdentifier::new("is_sorted", TType::Bool, 3)).await?;
-      written += o_prot.write_bool(fld_var).await?;
-      written += o_prot.write_field_end()?;
-    }
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
   }
 }
 
@@ -3583,155 +4025,16 @@ impl DataPageHeaderV2 {
       statistics: statistics.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeaderV2> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<i32> = None;
-    let mut f_2: Option<i32> = None;
-    let mut f_3: Option<i32> = None;
-    let mut f_4: Option<Encoding> = None;
-    let mut f_5: Option<i32> = None;
-    let mut f_6: Option<i32> = None;
-    let mut f_7: Option<bool> = None;
-    let mut f_8: Option<Statistics> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_i32()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i32()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i32()?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = Encoding::read_from_in_protocol(i_prot)?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i32()?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_i32()?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_bool()?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = Statistics::read_from_in_protocol(i_prot)?;
-          f_8 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("DataPageHeaderV2.num_values", &f_1)?;
-    verify_required_field_exists("DataPageHeaderV2.num_nulls", &f_2)?;
-    verify_required_field_exists("DataPageHeaderV2.num_rows", &f_3)?;
-    verify_required_field_exists("DataPageHeaderV2.encoding", &f_4)?;
-    verify_required_field_exists("DataPageHeaderV2.definition_levels_byte_length", &f_5)?;
-    verify_required_field_exists("DataPageHeaderV2.repetition_levels_byte_length", &f_6)?;
-    let ret = DataPageHeaderV2 {
-      num_values: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      num_nulls: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      encoding: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      definition_levels_byte_length: f_5.expect("auto-generated code should have checked for presence of required fields"),
-      repetition_levels_byte_length: f_6.expect("auto-generated code should have checked for presence of required fields"),
-      is_compressed: f_7,
-      statistics: f_8,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeaderV2> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<i32> = None;
-    let mut f_2: Option<i32> = None;
-    let mut f_3: Option<i32> = None;
-    let mut f_4: Option<Encoding> = None;
-    let mut f_5: Option<i32> = None;
-    let mut f_6: Option<i32> = None;
-    let mut f_7: Option<bool> = None;
-    let mut f_8: Option<Statistics> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_i32().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i32().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i32().await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = Encoding::stream_from_in_protocol(i_prot).await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i32().await?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_i32().await?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_bool().await?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = Statistics::stream_from_in_protocol(i_prot).await?;
-          f_8 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("DataPageHeaderV2.num_values", &f_1)?;
-    verify_required_field_exists("DataPageHeaderV2.num_nulls", &f_2)?;
-    verify_required_field_exists("DataPageHeaderV2.num_rows", &f_3)?;
-    verify_required_field_exists("DataPageHeaderV2.encoding", &f_4)?;
-    verify_required_field_exists("DataPageHeaderV2.definition_levels_byte_length", &f_5)?;
-    verify_required_field_exists("DataPageHeaderV2.repetition_levels_byte_length", &f_6)?;
-    let ret = DataPageHeaderV2 {
-      num_values: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      num_nulls: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      encoding: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      definition_levels_byte_length: f_5.expect("auto-generated code should have checked for presence of required fields"),
-      repetition_levels_byte_length: f_6.expect("auto-generated code should have checked for presence of required fields"),
-      is_compressed: f_7,
-      statistics: f_8,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("DataPageHeaderV2");
@@ -3807,6 +4110,162 @@ impl DataPageHeaderV2 {
   }
 }
 
+impl ReadThrift for DataPageHeaderV2 {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeaderV2> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<i32> = None;
+    let mut f_2: Option<i32> = None;
+    let mut f_3: Option<i32> = None;
+    let mut f_4: Option<Encoding> = None;
+    let mut f_5: Option<i32> = None;
+    let mut f_6: Option<i32> = None;
+    let mut f_7: Option<bool> = None;
+    let mut f_8: Option<Statistics> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_i32()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i32()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i32()?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = Encoding::read_from_in_protocol(i_prot)?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i32()?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_i32()?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_bool()?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = Statistics::read_from_in_protocol(i_prot)?;
+          f_8 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("DataPageHeaderV2.num_values", &f_1)?;
+    verify_required_field_exists("DataPageHeaderV2.num_nulls", &f_2)?;
+    verify_required_field_exists("DataPageHeaderV2.num_rows", &f_3)?;
+    verify_required_field_exists("DataPageHeaderV2.encoding", &f_4)?;
+    verify_required_field_exists("DataPageHeaderV2.definition_levels_byte_length", &f_5)?;
+    verify_required_field_exists("DataPageHeaderV2.repetition_levels_byte_length", &f_6)?;
+    let ret = DataPageHeaderV2 {
+      num_values: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      num_nulls: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      encoding: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      definition_levels_byte_length: f_5.expect("auto-generated code should have checked for presence of required fields"),
+      repetition_levels_byte_length: f_6.expect("auto-generated code should have checked for presence of required fields"),
+      is_compressed: f_7,
+      statistics: f_8,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for DataPageHeaderV2 {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<DataPageHeaderV2> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<i32> = None;
+    let mut f_2: Option<i32> = None;
+    let mut f_3: Option<i32> = None;
+    let mut f_4: Option<Encoding> = None;
+    let mut f_5: Option<i32> = None;
+    let mut f_6: Option<i32> = None;
+    let mut f_7: Option<bool> = None;
+    let mut f_8: Option<Statistics> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_i32().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i32().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i32().await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = Encoding::stream_from_in_protocol(i_prot).await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i32().await?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_i32().await?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_bool().await?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = Statistics::stream_from_in_protocol(i_prot).await?;
+          f_8 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("DataPageHeaderV2.num_values", &f_1)?;
+    verify_required_field_exists("DataPageHeaderV2.num_nulls", &f_2)?;
+    verify_required_field_exists("DataPageHeaderV2.num_rows", &f_3)?;
+    verify_required_field_exists("DataPageHeaderV2.encoding", &f_4)?;
+    verify_required_field_exists("DataPageHeaderV2.definition_levels_byte_length", &f_5)?;
+    verify_required_field_exists("DataPageHeaderV2.repetition_levels_byte_length", &f_6)?;
+    let ret = DataPageHeaderV2 {
+      num_values: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      num_nulls: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      encoding: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      definition_levels_byte_length: f_5.expect("auto-generated code should have checked for presence of required fields"),
+      repetition_levels_byte_length: f_6.expect("auto-generated code should have checked for presence of required fields"),
+      is_compressed: f_7,
+      statistics: f_8,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // SplitBlockAlgorithm
 //
@@ -3820,37 +4279,16 @@ impl SplitBlockAlgorithm {
   pub fn new() -> SplitBlockAlgorithm {
     SplitBlockAlgorithm {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<SplitBlockAlgorithm> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = SplitBlockAlgorithm {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SplitBlockAlgorithm> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = SplitBlockAlgorithm {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("SplitBlockAlgorithm");
@@ -3870,6 +4308,44 @@ impl SplitBlockAlgorithm {
   }
 }
 
+impl ReadThrift for SplitBlockAlgorithm {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<SplitBlockAlgorithm> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = SplitBlockAlgorithm {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for SplitBlockAlgorithm {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SplitBlockAlgorithm> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = SplitBlockAlgorithm {};
+    Ok(ret)
+  }
+}
+
 //
 // BloomFilterAlgorithm
 //
@@ -3880,7 +4356,49 @@ pub enum BloomFilterAlgorithm {
 }
 
 impl BloomFilterAlgorithm {
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterAlgorithm> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterAlgorithm> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("BloomFilterAlgorithm");
+    let mut written = o_prot.write_struct_begin(&struct_ident)?;
+    match *self {
+      BloomFilterAlgorithm::BLOCK(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("BLOCK", TType::Struct, 1))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("BloomFilterAlgorithm");
+    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
+    match *self {
+      BloomFilterAlgorithm::BLOCK(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("BLOCK", TType::Struct, 1)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for BloomFilterAlgorithm {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterAlgorithm> {
     let mut ret: Option<BloomFilterAlgorithm> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin()?;
@@ -3933,8 +4451,12 @@ impl BloomFilterAlgorithm {
       ))
     }
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterAlgorithm> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for BloomFilterAlgorithm {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterAlgorithm> {
     let mut ret: Option<BloomFilterAlgorithm> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin().await?;
@@ -3987,35 +4509,6 @@ impl BloomFilterAlgorithm {
       ))
     }
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("BloomFilterAlgorithm");
-    let mut written = o_prot.write_struct_begin(&struct_ident)?;
-    match *self {
-      BloomFilterAlgorithm::BLOCK(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("BLOCK", TType::Struct, 1))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("BloomFilterAlgorithm");
-    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
-    match *self {
-      BloomFilterAlgorithm::BLOCK(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("BLOCK", TType::Struct, 1)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -4033,37 +4526,16 @@ impl XxHash {
   pub fn new() -> XxHash {
     XxHash {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<XxHash> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = XxHash {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<XxHash> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = XxHash {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("XxHash");
@@ -4083,6 +4555,44 @@ impl XxHash {
   }
 }
 
+impl ReadThrift for XxHash {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<XxHash> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = XxHash {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for XxHash {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<XxHash> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = XxHash {};
+    Ok(ret)
+  }
+}
+
 //
 // BloomFilterHash
 //
@@ -4093,7 +4603,49 @@ pub enum BloomFilterHash {
 }
 
 impl BloomFilterHash {
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHash> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHash> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("BloomFilterHash");
+    let mut written = o_prot.write_struct_begin(&struct_ident)?;
+    match *self {
+      BloomFilterHash::XXHASH(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("XXHASH", TType::Struct, 1))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("BloomFilterHash");
+    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
+    match *self {
+      BloomFilterHash::XXHASH(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("XXHASH", TType::Struct, 1)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for BloomFilterHash {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHash> {
     let mut ret: Option<BloomFilterHash> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin()?;
@@ -4146,8 +4698,12 @@ impl BloomFilterHash {
       ))
     }
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHash> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for BloomFilterHash {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHash> {
     let mut ret: Option<BloomFilterHash> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin().await?;
@@ -4200,35 +4756,6 @@ impl BloomFilterHash {
       ))
     }
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("BloomFilterHash");
-    let mut written = o_prot.write_struct_begin(&struct_ident)?;
-    match *self {
-      BloomFilterHash::XXHASH(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("XXHASH", TType::Struct, 1))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("BloomFilterHash");
-    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
-    match *self {
-      BloomFilterHash::XXHASH(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("XXHASH", TType::Struct, 1)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -4245,37 +4772,16 @@ impl Uncompressed {
   pub fn new() -> Uncompressed {
     Uncompressed {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<Uncompressed> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = Uncompressed {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Uncompressed> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = Uncompressed {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("Uncompressed");
@@ -4295,6 +4801,44 @@ impl Uncompressed {
   }
 }
 
+impl ReadThrift for Uncompressed {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<Uncompressed> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = Uncompressed {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for Uncompressed {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<Uncompressed> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = Uncompressed {};
+    Ok(ret)
+  }
+}
+
 //
 // BloomFilterCompression
 //
@@ -4305,7 +4849,49 @@ pub enum BloomFilterCompression {
 }
 
 impl BloomFilterCompression {
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterCompression> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterCompression> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("BloomFilterCompression");
+    let mut written = o_prot.write_struct_begin(&struct_ident)?;
+    match *self {
+      BloomFilterCompression::UNCOMPRESSED(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("UNCOMPRESSED", TType::Struct, 1))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("BloomFilterCompression");
+    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
+    match *self {
+      BloomFilterCompression::UNCOMPRESSED(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("UNCOMPRESSED", TType::Struct, 1)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for BloomFilterCompression {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterCompression> {
     let mut ret: Option<BloomFilterCompression> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin()?;
@@ -4358,8 +4944,12 @@ impl BloomFilterCompression {
       ))
     }
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterCompression> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for BloomFilterCompression {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterCompression> {
     let mut ret: Option<BloomFilterCompression> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin().await?;
@@ -4412,35 +5002,6 @@ impl BloomFilterCompression {
       ))
     }
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("BloomFilterCompression");
-    let mut written = o_prot.write_struct_begin(&struct_ident)?;
-    match *self {
-      BloomFilterCompression::UNCOMPRESSED(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("UNCOMPRESSED", TType::Struct, 1))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("BloomFilterCompression");
-    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
-    match *self {
-      BloomFilterCompression::UNCOMPRESSED(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("UNCOMPRESSED", TType::Struct, 1)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -4471,7 +5032,61 @@ impl BloomFilterHeader {
       compression,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHeader> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHeader> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("BloomFilterHeader");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("numBytes", TType::I32, 1))?;
+    written += o_prot.write_i32(self.num_bytes)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("algorithm", TType::Struct, 2))?;
+    written += self.algorithm.write_to_out_protocol(o_prot)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("hash", TType::Struct, 3))?;
+    written += self.hash.write_to_out_protocol(o_prot)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("compression", TType::Struct, 4))?;
+    written += self.compression.write_to_out_protocol(o_prot)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("BloomFilterHeader");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("numBytes", TType::I32, 1)).await?;
+    written += o_prot.write_i32(self.num_bytes).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("algorithm", TType::Struct, 2)).await?;
+    written += self.algorithm.write_to_out_stream_protocol(o_prot).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("hash", TType::Struct, 3)).await?;
+    written += self.hash.write_to_out_stream_protocol(o_prot).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("compression", TType::Struct, 4)).await?;
+    written += self.compression.write_to_out_stream_protocol(o_prot).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for BloomFilterHeader {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHeader> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<i32> = None;
     let mut f_2: Option<BloomFilterAlgorithm> = None;
@@ -4519,8 +5134,12 @@ impl BloomFilterHeader {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHeader> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for BloomFilterHeader {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<BloomFilterHeader> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
     let mut f_2: Option<BloomFilterAlgorithm> = None;
@@ -4567,47 +5186,6 @@ impl BloomFilterHeader {
       compression: f_4.expect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
-  }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("BloomFilterHeader");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("numBytes", TType::I32, 1))?;
-    written += o_prot.write_i32(self.num_bytes)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("algorithm", TType::Struct, 2))?;
-    written += self.algorithm.write_to_out_protocol(o_prot)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("hash", TType::Struct, 3))?;
-    written += self.hash.write_to_out_protocol(o_prot)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("compression", TType::Struct, 4))?;
-    written += self.compression.write_to_out_protocol(o_prot)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("BloomFilterHeader");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("numBytes", TType::I32, 1)).await?;
-    written += o_prot.write_i32(self.num_bytes).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("algorithm", TType::Struct, 2)).await?;
-    written += self.algorithm.write_to_out_stream_protocol(o_prot).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("hash", TType::Struct, 3)).await?;
-    written += self.hash.write_to_out_stream_protocol(o_prot).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("compression", TType::Struct, 4)).await?;
-    written += self.compression.write_to_out_stream_protocol(o_prot).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
   }
 }
 
@@ -4669,149 +5247,16 @@ impl PageHeader {
       data_page_header_v2: data_page_header_v2.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<PageHeader> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<PageType> = None;
-    let mut f_2: Option<i32> = None;
-    let mut f_3: Option<i32> = None;
-    let mut f_4: Option<i32> = None;
-    let mut f_5: Option<DataPageHeader> = None;
-    let mut f_6: Option<IndexPageHeader> = None;
-    let mut f_7: Option<DictionaryPageHeader> = None;
-    let mut f_8: Option<DataPageHeaderV2> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = PageType::read_from_in_protocol(i_prot)?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i32()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i32()?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = i_prot.read_i32()?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = DataPageHeader::read_from_in_protocol(i_prot)?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = IndexPageHeader::read_from_in_protocol(i_prot)?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = DictionaryPageHeader::read_from_in_protocol(i_prot)?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = DataPageHeaderV2::read_from_in_protocol(i_prot)?;
-          f_8 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("PageHeader.type_", &f_1)?;
-    verify_required_field_exists("PageHeader.uncompressed_page_size", &f_2)?;
-    verify_required_field_exists("PageHeader.compressed_page_size", &f_3)?;
-    let ret = PageHeader {
-      type_: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      uncompressed_page_size: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      compressed_page_size: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      crc: f_4,
-      data_page_header: f_5,
-      index_page_header: f_6,
-      dictionary_page_header: f_7,
-      data_page_header_v2: f_8,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageHeader> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<PageType> = None;
-    let mut f_2: Option<i32> = None;
-    let mut f_3: Option<i32> = None;
-    let mut f_4: Option<i32> = None;
-    let mut f_5: Option<DataPageHeader> = None;
-    let mut f_6: Option<IndexPageHeader> = None;
-    let mut f_7: Option<DictionaryPageHeader> = None;
-    let mut f_8: Option<DataPageHeaderV2> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = PageType::stream_from_in_protocol(i_prot).await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i32().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i32().await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = i_prot.read_i32().await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = DataPageHeader::stream_from_in_protocol(i_prot).await?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = IndexPageHeader::stream_from_in_protocol(i_prot).await?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = DictionaryPageHeader::stream_from_in_protocol(i_prot).await?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = DataPageHeaderV2::stream_from_in_protocol(i_prot).await?;
-          f_8 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("PageHeader.type_", &f_1)?;
-    verify_required_field_exists("PageHeader.uncompressed_page_size", &f_2)?;
-    verify_required_field_exists("PageHeader.compressed_page_size", &f_3)?;
-    let ret = PageHeader {
-      type_: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      uncompressed_page_size: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      compressed_page_size: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      crc: f_4,
-      data_page_header: f_5,
-      index_page_header: f_6,
-      dictionary_page_header: f_7,
-      data_page_header_v2: f_8,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("PageHeader");
@@ -4899,6 +5344,156 @@ impl PageHeader {
   }
 }
 
+impl ReadThrift for PageHeader {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<PageHeader> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<PageType> = None;
+    let mut f_2: Option<i32> = None;
+    let mut f_3: Option<i32> = None;
+    let mut f_4: Option<i32> = None;
+    let mut f_5: Option<DataPageHeader> = None;
+    let mut f_6: Option<IndexPageHeader> = None;
+    let mut f_7: Option<DictionaryPageHeader> = None;
+    let mut f_8: Option<DataPageHeaderV2> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = PageType::read_from_in_protocol(i_prot)?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i32()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i32()?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_i32()?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = DataPageHeader::read_from_in_protocol(i_prot)?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = IndexPageHeader::read_from_in_protocol(i_prot)?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = DictionaryPageHeader::read_from_in_protocol(i_prot)?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = DataPageHeaderV2::read_from_in_protocol(i_prot)?;
+          f_8 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("PageHeader.type_", &f_1)?;
+    verify_required_field_exists("PageHeader.uncompressed_page_size", &f_2)?;
+    verify_required_field_exists("PageHeader.compressed_page_size", &f_3)?;
+    let ret = PageHeader {
+      type_: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      uncompressed_page_size: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      compressed_page_size: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      crc: f_4,
+      data_page_header: f_5,
+      index_page_header: f_6,
+      dictionary_page_header: f_7,
+      data_page_header_v2: f_8,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for PageHeader {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageHeader> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<PageType> = None;
+    let mut f_2: Option<i32> = None;
+    let mut f_3: Option<i32> = None;
+    let mut f_4: Option<i32> = None;
+    let mut f_5: Option<DataPageHeader> = None;
+    let mut f_6: Option<IndexPageHeader> = None;
+    let mut f_7: Option<DictionaryPageHeader> = None;
+    let mut f_8: Option<DataPageHeaderV2> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = PageType::stream_from_in_protocol(i_prot).await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i32().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i32().await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_i32().await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = DataPageHeader::stream_from_in_protocol(i_prot).await?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = IndexPageHeader::stream_from_in_protocol(i_prot).await?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = DictionaryPageHeader::stream_from_in_protocol(i_prot).await?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = DataPageHeaderV2::stream_from_in_protocol(i_prot).await?;
+          f_8 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("PageHeader.type_", &f_1)?;
+    verify_required_field_exists("PageHeader.uncompressed_page_size", &f_2)?;
+    verify_required_field_exists("PageHeader.compressed_page_size", &f_3)?;
+    let ret = PageHeader {
+      type_: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      uncompressed_page_size: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      compressed_page_size: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      crc: f_4,
+      data_page_header: f_5,
+      index_page_header: f_6,
+      dictionary_page_header: f_7,
+      data_page_header_v2: f_8,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // KeyValue
 //
@@ -4917,73 +5512,16 @@ impl KeyValue {
       value: value.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<KeyValue> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<String> = None;
-    let mut f_2: Option<String> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_string()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_string()?;
-          f_2 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("KeyValue.key", &f_1)?;
-    let ret = KeyValue {
-      key: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      value: f_2,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<KeyValue> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<String> = None;
-    let mut f_2: Option<String> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_string().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_string().await?;
-          f_2 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("KeyValue.key", &f_1)?;
-    let ret = KeyValue {
-      key: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      value: f_2,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("KeyValue");
@@ -5019,6 +5557,80 @@ impl KeyValue {
   }
 }
 
+impl ReadThrift for KeyValue {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<KeyValue> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<String> = None;
+    let mut f_2: Option<String> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_string()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_string()?;
+          f_2 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("KeyValue.key", &f_1)?;
+    let ret = KeyValue {
+      key: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      value: f_2,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for KeyValue {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<KeyValue> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<String> = None;
+    let mut f_2: Option<String> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_string().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_string().await?;
+          f_2 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("KeyValue.key", &f_1)?;
+    let ret = KeyValue {
+      key: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      value: f_2,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // SortingColumn
 //
@@ -5043,7 +5655,55 @@ impl SortingColumn {
       nulls_first,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<SortingColumn> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SortingColumn> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("SortingColumn");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("column_idx", TType::I32, 1))?;
+    written += o_prot.write_i32(self.column_idx)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("descending", TType::Bool, 2))?;
+    written += o_prot.write_bool(self.descending)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("nulls_first", TType::Bool, 3))?;
+    written += o_prot.write_bool(self.nulls_first)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("SortingColumn");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("column_idx", TType::I32, 1)).await?;
+    written += o_prot.write_i32(self.column_idx).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("descending", TType::Bool, 2)).await?;
+    written += o_prot.write_bool(self.descending).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("nulls_first", TType::Bool, 3)).await?;
+    written += o_prot.write_bool(self.nulls_first).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for SortingColumn {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<SortingColumn> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<i32> = None;
     let mut f_2: Option<bool> = None;
@@ -5084,8 +5744,12 @@ impl SortingColumn {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SortingColumn> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for SortingColumn {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<SortingColumn> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i32> = None;
     let mut f_2: Option<bool> = None;
@@ -5126,41 +5790,6 @@ impl SortingColumn {
     };
     Ok(ret)
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("SortingColumn");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("column_idx", TType::I32, 1))?;
-    written += o_prot.write_i32(self.column_idx)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("descending", TType::Bool, 2))?;
-    written += o_prot.write_bool(self.descending)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("nulls_first", TType::Bool, 3))?;
-    written += o_prot.write_bool(self.nulls_first)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("SortingColumn");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("column_idx", TType::I32, 1)).await?;
-    written += o_prot.write_i32(self.column_idx).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("descending", TType::Bool, 2)).await?;
-    written += o_prot.write_bool(self.descending).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("nulls_first", TType::Bool, 3)).await?;
-    written += o_prot.write_bool(self.nulls_first).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -5186,7 +5815,55 @@ impl PageEncodingStats {
       count,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<PageEncodingStats> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageEncodingStats> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("PageEncodingStats");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("page_type", TType::I32, 1))?;
+    written += self.page_type.write_to_out_protocol(o_prot)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding", TType::I32, 2))?;
+    written += self.encoding.write_to_out_protocol(o_prot)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("count", TType::I32, 3))?;
+    written += o_prot.write_i32(self.count)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("PageEncodingStats");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("page_type", TType::I32, 1)).await?;
+    written += self.page_type.write_to_out_stream_protocol(o_prot).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding", TType::I32, 2)).await?;
+    written += self.encoding.write_to_out_stream_protocol(o_prot).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("count", TType::I32, 3)).await?;
+    written += o_prot.write_i32(self.count).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for PageEncodingStats {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<PageEncodingStats> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<PageType> = None;
     let mut f_2: Option<Encoding> = None;
@@ -5227,8 +5904,12 @@ impl PageEncodingStats {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageEncodingStats> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for PageEncodingStats {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageEncodingStats> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<PageType> = None;
     let mut f_2: Option<Encoding> = None;
@@ -5268,41 +5949,6 @@ impl PageEncodingStats {
       count: f_3.expect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
-  }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("PageEncodingStats");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("page_type", TType::I32, 1))?;
-    written += self.page_type.write_to_out_protocol(o_prot)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding", TType::I32, 2))?;
-    written += self.encoding.write_to_out_protocol(o_prot)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("count", TType::I32, 3))?;
-    written += o_prot.write_i32(self.count)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("PageEncodingStats");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("page_type", TType::I32, 1)).await?;
-    written += self.page_type.write_to_out_stream_protocol(o_prot).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("encoding", TType::I32, 2)).await?;
-    written += self.encoding.write_to_out_stream_protocol(o_prot).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("count", TType::I32, 3)).await?;
-    written += o_prot.write_i32(self.count).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
   }
 }
 
@@ -5366,279 +6012,16 @@ impl ColumnMetaData {
       bloom_filter_offset: bloom_filter_offset.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnMetaData> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Type> = None;
-    let mut f_2: Option<Vec<Encoding>> = None;
-    let mut f_3: Option<Vec<String>> = None;
-    let mut f_4: Option<CompressionCodec> = None;
-    let mut f_5: Option<i64> = None;
-    let mut f_6: Option<i64> = None;
-    let mut f_7: Option<i64> = None;
-    let mut f_8: Option<Vec<KeyValue>> = None;
-    let mut f_9: Option<i64> = None;
-    let mut f_10: Option<i64> = None;
-    let mut f_11: Option<i64> = None;
-    let mut f_12: Option<Statistics> = None;
-    let mut f_13: Option<Vec<PageEncodingStats>> = None;
-    let mut f_14: Option<i64> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = Type::read_from_in_protocol(i_prot)?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<Encoding> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_0 = Encoding::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_0);
-          }
-          i_prot.read_list_end()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<String> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_1 = i_prot.read_string()?;
-            val.push(list_elem_1);
-          }
-          i_prot.read_list_end()?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = CompressionCodec::read_from_in_protocol(i_prot)?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i64()?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_i64()?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_i64()?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<KeyValue> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_2 = KeyValue::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_2);
-          }
-          i_prot.read_list_end()?;
-          f_8 = Some(val);
-        },
-        9 => {
-          let val = i_prot.read_i64()?;
-          f_9 = Some(val);
-        },
-        10 => {
-          let val = i_prot.read_i64()?;
-          f_10 = Some(val);
-        },
-        11 => {
-          let val = i_prot.read_i64()?;
-          f_11 = Some(val);
-        },
-        12 => {
-          let val = Statistics::read_from_in_protocol(i_prot)?;
-          f_12 = Some(val);
-        },
-        13 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<PageEncodingStats> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_3 = PageEncodingStats::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_3);
-          }
-          i_prot.read_list_end()?;
-          f_13 = Some(val);
-        },
-        14 => {
-          let val = i_prot.read_i64()?;
-          f_14 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("ColumnMetaData.type_", &f_1)?;
-    verify_required_field_exists("ColumnMetaData.encodings", &f_2)?;
-    verify_required_field_exists("ColumnMetaData.path_in_schema", &f_3)?;
-    verify_required_field_exists("ColumnMetaData.codec", &f_4)?;
-    verify_required_field_exists("ColumnMetaData.num_values", &f_5)?;
-    verify_required_field_exists("ColumnMetaData.total_uncompressed_size", &f_6)?;
-    verify_required_field_exists("ColumnMetaData.total_compressed_size", &f_7)?;
-    verify_required_field_exists("ColumnMetaData.data_page_offset", &f_9)?;
-    let ret = ColumnMetaData {
-      type_: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      encodings: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      path_in_schema: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      codec: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      num_values: f_5.expect("auto-generated code should have checked for presence of required fields"),
-      total_uncompressed_size: f_6.expect("auto-generated code should have checked for presence of required fields"),
-      total_compressed_size: f_7.expect("auto-generated code should have checked for presence of required fields"),
-      key_value_metadata: f_8,
-      data_page_offset: f_9.expect("auto-generated code should have checked for presence of required fields"),
-      index_page_offset: f_10,
-      dictionary_page_offset: f_11,
-      statistics: f_12,
-      encoding_stats: f_13,
-      bloom_filter_offset: f_14,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnMetaData> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Type> = None;
-    let mut f_2: Option<Vec<Encoding>> = None;
-    let mut f_3: Option<Vec<String>> = None;
-    let mut f_4: Option<CompressionCodec> = None;
-    let mut f_5: Option<i64> = None;
-    let mut f_6: Option<i64> = None;
-    let mut f_7: Option<i64> = None;
-    let mut f_8: Option<Vec<KeyValue>> = None;
-    let mut f_9: Option<i64> = None;
-    let mut f_10: Option<i64> = None;
-    let mut f_11: Option<i64> = None;
-    let mut f_12: Option<Statistics> = None;
-    let mut f_13: Option<Vec<PageEncodingStats>> = None;
-    let mut f_14: Option<i64> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = Type::stream_from_in_protocol(i_prot).await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<Encoding> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_4 = Encoding::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_4);
-          }
-          i_prot.read_list_end().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<String> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_5 = i_prot.read_string().await?;
-            val.push(list_elem_5);
-          }
-          i_prot.read_list_end().await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = CompressionCodec::stream_from_in_protocol(i_prot).await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i64().await?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_i64().await?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_i64().await?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<KeyValue> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_6 = KeyValue::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_6);
-          }
-          i_prot.read_list_end().await?;
-          f_8 = Some(val);
-        },
-        9 => {
-          let val = i_prot.read_i64().await?;
-          f_9 = Some(val);
-        },
-        10 => {
-          let val = i_prot.read_i64().await?;
-          f_10 = Some(val);
-        },
-        11 => {
-          let val = i_prot.read_i64().await?;
-          f_11 = Some(val);
-        },
-        12 => {
-          let val = Statistics::stream_from_in_protocol(i_prot).await?;
-          f_12 = Some(val);
-        },
-        13 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<PageEncodingStats> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_7 = PageEncodingStats::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_7);
-          }
-          i_prot.read_list_end().await?;
-          f_13 = Some(val);
-        },
-        14 => {
-          let val = i_prot.read_i64().await?;
-          f_14 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("ColumnMetaData.type_", &f_1)?;
-    verify_required_field_exists("ColumnMetaData.encodings", &f_2)?;
-    verify_required_field_exists("ColumnMetaData.path_in_schema", &f_3)?;
-    verify_required_field_exists("ColumnMetaData.codec", &f_4)?;
-    verify_required_field_exists("ColumnMetaData.num_values", &f_5)?;
-    verify_required_field_exists("ColumnMetaData.total_uncompressed_size", &f_6)?;
-    verify_required_field_exists("ColumnMetaData.total_compressed_size", &f_7)?;
-    verify_required_field_exists("ColumnMetaData.data_page_offset", &f_9)?;
-    let ret = ColumnMetaData {
-      type_: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      encodings: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      path_in_schema: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      codec: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      num_values: f_5.expect("auto-generated code should have checked for presence of required fields"),
-      total_uncompressed_size: f_6.expect("auto-generated code should have checked for presence of required fields"),
-      total_compressed_size: f_7.expect("auto-generated code should have checked for presence of required fields"),
-      key_value_metadata: f_8,
-      data_page_offset: f_9.expect("auto-generated code should have checked for presence of required fields"),
-      index_page_offset: f_10,
-      dictionary_page_offset: f_11,
-      statistics: f_12,
-      encoding_stats: f_13,
-      bloom_filter_offset: f_14,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("ColumnMetaData");
@@ -5798,6 +6181,238 @@ impl ColumnMetaData {
   }
 }
 
+impl ReadThrift for ColumnMetaData {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnMetaData> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Type> = None;
+    let mut f_2: Option<Vec<Encoding>> = None;
+    let mut f_3: Option<Vec<String>> = None;
+    let mut f_4: Option<CompressionCodec> = None;
+    let mut f_5: Option<i64> = None;
+    let mut f_6: Option<i64> = None;
+    let mut f_7: Option<i64> = None;
+    let mut f_8: Option<Vec<KeyValue>> = None;
+    let mut f_9: Option<i64> = None;
+    let mut f_10: Option<i64> = None;
+    let mut f_11: Option<i64> = None;
+    let mut f_12: Option<Statistics> = None;
+    let mut f_13: Option<Vec<PageEncodingStats>> = None;
+    let mut f_14: Option<i64> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = Type::read_from_in_protocol(i_prot)?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_list()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_list()?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = CompressionCodec::read_from_in_protocol(i_prot)?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i64()?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_i64()?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_i64()?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = i_prot.read_list()?;
+          f_8 = Some(val);
+        },
+        9 => {
+          let val = i_prot.read_i64()?;
+          f_9 = Some(val);
+        },
+        10 => {
+          let val = i_prot.read_i64()?;
+          f_10 = Some(val);
+        },
+        11 => {
+          let val = i_prot.read_i64()?;
+          f_11 = Some(val);
+        },
+        12 => {
+          let val = Statistics::read_from_in_protocol(i_prot)?;
+          f_12 = Some(val);
+        },
+        13 => {
+          let val = i_prot.read_list()?;
+          f_13 = Some(val);
+        },
+        14 => {
+          let val = i_prot.read_i64()?;
+          f_14 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("ColumnMetaData.type_", &f_1)?;
+    verify_required_field_exists("ColumnMetaData.encodings", &f_2)?;
+    verify_required_field_exists("ColumnMetaData.path_in_schema", &f_3)?;
+    verify_required_field_exists("ColumnMetaData.codec", &f_4)?;
+    verify_required_field_exists("ColumnMetaData.num_values", &f_5)?;
+    verify_required_field_exists("ColumnMetaData.total_uncompressed_size", &f_6)?;
+    verify_required_field_exists("ColumnMetaData.total_compressed_size", &f_7)?;
+    verify_required_field_exists("ColumnMetaData.data_page_offset", &f_9)?;
+    let ret = ColumnMetaData {
+      type_: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      encodings: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      path_in_schema: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      codec: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      num_values: f_5.expect("auto-generated code should have checked for presence of required fields"),
+      total_uncompressed_size: f_6.expect("auto-generated code should have checked for presence of required fields"),
+      total_compressed_size: f_7.expect("auto-generated code should have checked for presence of required fields"),
+      key_value_metadata: f_8,
+      data_page_offset: f_9.expect("auto-generated code should have checked for presence of required fields"),
+      index_page_offset: f_10,
+      dictionary_page_offset: f_11,
+      statistics: f_12,
+      encoding_stats: f_13,
+      bloom_filter_offset: f_14,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for ColumnMetaData {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnMetaData> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Type> = None;
+    let mut f_2: Option<Vec<Encoding>> = None;
+    let mut f_3: Option<Vec<String>> = None;
+    let mut f_4: Option<CompressionCodec> = None;
+    let mut f_5: Option<i64> = None;
+    let mut f_6: Option<i64> = None;
+    let mut f_7: Option<i64> = None;
+    let mut f_8: Option<Vec<KeyValue>> = None;
+    let mut f_9: Option<i64> = None;
+    let mut f_10: Option<i64> = None;
+    let mut f_11: Option<i64> = None;
+    let mut f_12: Option<Statistics> = None;
+    let mut f_13: Option<Vec<PageEncodingStats>> = None;
+    let mut f_14: Option<i64> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = Type::stream_from_in_protocol(i_prot).await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_list().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_list().await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = CompressionCodec::stream_from_in_protocol(i_prot).await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i64().await?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_i64().await?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_i64().await?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = i_prot.read_list().await?;
+          f_8 = Some(val);
+        },
+        9 => {
+          let val = i_prot.read_i64().await?;
+          f_9 = Some(val);
+        },
+        10 => {
+          let val = i_prot.read_i64().await?;
+          f_10 = Some(val);
+        },
+        11 => {
+          let val = i_prot.read_i64().await?;
+          f_11 = Some(val);
+        },
+        12 => {
+          let val = Statistics::stream_from_in_protocol(i_prot).await?;
+          f_12 = Some(val);
+        },
+        13 => {
+          let val = i_prot.read_list().await?;
+          f_13 = Some(val);
+        },
+        14 => {
+          let val = i_prot.read_i64().await?;
+          f_14 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("ColumnMetaData.type_", &f_1)?;
+    verify_required_field_exists("ColumnMetaData.encodings", &f_2)?;
+    verify_required_field_exists("ColumnMetaData.path_in_schema", &f_3)?;
+    verify_required_field_exists("ColumnMetaData.codec", &f_4)?;
+    verify_required_field_exists("ColumnMetaData.num_values", &f_5)?;
+    verify_required_field_exists("ColumnMetaData.total_uncompressed_size", &f_6)?;
+    verify_required_field_exists("ColumnMetaData.total_compressed_size", &f_7)?;
+    verify_required_field_exists("ColumnMetaData.data_page_offset", &f_9)?;
+    let ret = ColumnMetaData {
+      type_: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      encodings: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      path_in_schema: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      codec: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      num_values: f_5.expect("auto-generated code should have checked for presence of required fields"),
+      total_uncompressed_size: f_6.expect("auto-generated code should have checked for presence of required fields"),
+      total_compressed_size: f_7.expect("auto-generated code should have checked for presence of required fields"),
+      key_value_metadata: f_8,
+      data_page_offset: f_9.expect("auto-generated code should have checked for presence of required fields"),
+      index_page_offset: f_10,
+      dictionary_page_offset: f_11,
+      statistics: f_12,
+      encoding_stats: f_13,
+      bloom_filter_offset: f_14,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // EncryptionWithFooterKey
 //
@@ -5810,37 +6425,16 @@ impl EncryptionWithFooterKey {
   pub fn new() -> EncryptionWithFooterKey {
     EncryptionWithFooterKey {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithFooterKey> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = EncryptionWithFooterKey {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithFooterKey> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = EncryptionWithFooterKey {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("EncryptionWithFooterKey");
@@ -5857,6 +6451,44 @@ impl EncryptionWithFooterKey {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for EncryptionWithFooterKey {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithFooterKey> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = EncryptionWithFooterKey {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for EncryptionWithFooterKey {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithFooterKey> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = EncryptionWithFooterKey {};
+    Ok(ret)
   }
 }
 
@@ -5879,85 +6511,16 @@ impl EncryptionWithColumnKey {
       key_metadata: key_metadata.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithColumnKey> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Vec<String>> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<String> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_8 = i_prot.read_string()?;
-            val.push(list_elem_8);
-          }
-          i_prot.read_list_end()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes()?;
-          f_2 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("EncryptionWithColumnKey.path_in_schema", &f_1)?;
-    let ret = EncryptionWithColumnKey {
-      path_in_schema: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      key_metadata: f_2,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithColumnKey> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Vec<String>> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<String> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_9 = i_prot.read_string().await?;
-            val.push(list_elem_9);
-          }
-          i_prot.read_list_end().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes().await?;
-          f_2 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("EncryptionWithColumnKey.path_in_schema", &f_1)?;
-    let ret = EncryptionWithColumnKey {
-      path_in_schema: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      key_metadata: f_2,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("EncryptionWithColumnKey");
@@ -6001,6 +6564,80 @@ impl EncryptionWithColumnKey {
   }
 }
 
+impl ReadThrift for EncryptionWithColumnKey {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithColumnKey> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Vec<String>> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_list()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes()?;
+          f_2 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("EncryptionWithColumnKey.path_in_schema", &f_1)?;
+    let ret = EncryptionWithColumnKey {
+      path_in_schema: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      key_metadata: f_2,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for EncryptionWithColumnKey {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionWithColumnKey> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Vec<String>> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_list().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes().await?;
+          f_2 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("EncryptionWithColumnKey.path_in_schema", &f_1)?;
+    let ret = EncryptionWithColumnKey {
+      path_in_schema: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      key_metadata: f_2,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // ColumnCryptoMetaData
 //
@@ -6012,7 +6649,59 @@ pub enum ColumnCryptoMetaData {
 }
 
 impl ColumnCryptoMetaData {
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnCryptoMetaData> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnCryptoMetaData> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("ColumnCryptoMetaData");
+    let mut written = o_prot.write_struct_begin(&struct_ident)?;
+    match *self {
+      ColumnCryptoMetaData::ENCRYPTIONWITHFOOTERKEY(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("ENCRYPTION_WITH_FOOTER_KEY", TType::Struct, 1))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+      ColumnCryptoMetaData::ENCRYPTIONWITHCOLUMNKEY(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("ENCRYPTION_WITH_COLUMN_KEY", TType::Struct, 2))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("ColumnCryptoMetaData");
+    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
+    match *self {
+      ColumnCryptoMetaData::ENCRYPTIONWITHFOOTERKEY(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("ENCRYPTION_WITH_FOOTER_KEY", TType::Struct, 1)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+      ColumnCryptoMetaData::ENCRYPTIONWITHCOLUMNKEY(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("ENCRYPTION_WITH_COLUMN_KEY", TType::Struct, 2)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for ColumnCryptoMetaData {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnCryptoMetaData> {
     let mut ret: Option<ColumnCryptoMetaData> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin()?;
@@ -6072,8 +6761,12 @@ impl ColumnCryptoMetaData {
       ))
     }
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnCryptoMetaData> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for ColumnCryptoMetaData {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnCryptoMetaData> {
     let mut ret: Option<ColumnCryptoMetaData> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin().await?;
@@ -6133,45 +6826,6 @@ impl ColumnCryptoMetaData {
       ))
     }
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("ColumnCryptoMetaData");
-    let mut written = o_prot.write_struct_begin(&struct_ident)?;
-    match *self {
-      ColumnCryptoMetaData::ENCRYPTIONWITHFOOTERKEY(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("ENCRYPTION_WITH_FOOTER_KEY", TType::Struct, 1))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-      ColumnCryptoMetaData::ENCRYPTIONWITHCOLUMNKEY(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("ENCRYPTION_WITH_COLUMN_KEY", TType::Struct, 2))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("ColumnCryptoMetaData");
-    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
-    match *self {
-      ColumnCryptoMetaData::ENCRYPTIONWITHFOOTERKEY(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("ENCRYPTION_WITH_FOOTER_KEY", TType::Struct, 1)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-      ColumnCryptoMetaData::ENCRYPTIONWITHCOLUMNKEY(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("ENCRYPTION_WITH_COLUMN_KEY", TType::Struct, 2)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -6219,157 +6873,16 @@ impl ColumnChunk {
       encrypted_column_metadata: encrypted_column_metadata.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnChunk> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<String> = None;
-    let mut f_2: Option<i64> = None;
-    let mut f_3: Option<ColumnMetaData> = None;
-    let mut f_4: Option<i64> = None;
-    let mut f_5: Option<i32> = None;
-    let mut f_6: Option<i64> = None;
-    let mut f_7: Option<i32> = None;
-    let mut f_8: Option<ColumnCryptoMetaData> = None;
-    let mut f_9: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_string()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i64()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = ColumnMetaData::read_from_in_protocol(i_prot)?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = i_prot.read_i64()?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i32()?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_i64()?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_i32()?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = ColumnCryptoMetaData::read_from_in_protocol(i_prot)?;
-          f_8 = Some(val);
-        },
-        9 => {
-          let val = i_prot.read_bytes()?;
-          f_9 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("ColumnChunk.file_offset", &f_2)?;
-    let ret = ColumnChunk {
-      file_path: f_1,
-      file_offset: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      meta_data: f_3,
-      offset_index_offset: f_4,
-      offset_index_length: f_5,
-      column_index_offset: f_6,
-      column_index_length: f_7,
-      crypto_metadata: f_8,
-      encrypted_column_metadata: f_9,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnChunk> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<String> = None;
-    let mut f_2: Option<i64> = None;
-    let mut f_3: Option<ColumnMetaData> = None;
-    let mut f_4: Option<i64> = None;
-    let mut f_5: Option<i32> = None;
-    let mut f_6: Option<i64> = None;
-    let mut f_7: Option<i32> = None;
-    let mut f_8: Option<ColumnCryptoMetaData> = None;
-    let mut f_9: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_string().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i64().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = ColumnMetaData::stream_from_in_protocol(i_prot).await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = i_prot.read_i64().await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i32().await?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_i64().await?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_i32().await?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = ColumnCryptoMetaData::stream_from_in_protocol(i_prot).await?;
-          f_8 = Some(val);
-        },
-        9 => {
-          let val = i_prot.read_bytes().await?;
-          f_9 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("ColumnChunk.file_offset", &f_2)?;
-    let ret = ColumnChunk {
-      file_path: f_1,
-      file_offset: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      meta_data: f_3,
-      offset_index_offset: f_4,
-      offset_index_length: f_5,
-      column_index_offset: f_6,
-      column_index_length: f_7,
-      crypto_metadata: f_8,
-      encrypted_column_metadata: f_9,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("ColumnChunk");
@@ -6475,6 +6988,164 @@ impl ColumnChunk {
   }
 }
 
+impl ReadThrift for ColumnChunk {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnChunk> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<String> = None;
+    let mut f_2: Option<i64> = None;
+    let mut f_3: Option<ColumnMetaData> = None;
+    let mut f_4: Option<i64> = None;
+    let mut f_5: Option<i32> = None;
+    let mut f_6: Option<i64> = None;
+    let mut f_7: Option<i32> = None;
+    let mut f_8: Option<ColumnCryptoMetaData> = None;
+    let mut f_9: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_string()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i64()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = ColumnMetaData::read_from_in_protocol(i_prot)?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_i64()?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i32()?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_i64()?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_i32()?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = ColumnCryptoMetaData::read_from_in_protocol(i_prot)?;
+          f_8 = Some(val);
+        },
+        9 => {
+          let val = i_prot.read_bytes()?;
+          f_9 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("ColumnChunk.file_offset", &f_2)?;
+    let ret = ColumnChunk {
+      file_path: f_1,
+      file_offset: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      meta_data: f_3,
+      offset_index_offset: f_4,
+      offset_index_length: f_5,
+      column_index_offset: f_6,
+      column_index_length: f_7,
+      crypto_metadata: f_8,
+      encrypted_column_metadata: f_9,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for ColumnChunk {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnChunk> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<String> = None;
+    let mut f_2: Option<i64> = None;
+    let mut f_3: Option<ColumnMetaData> = None;
+    let mut f_4: Option<i64> = None;
+    let mut f_5: Option<i32> = None;
+    let mut f_6: Option<i64> = None;
+    let mut f_7: Option<i32> = None;
+    let mut f_8: Option<ColumnCryptoMetaData> = None;
+    let mut f_9: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_string().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i64().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = ColumnMetaData::stream_from_in_protocol(i_prot).await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_i64().await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i32().await?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_i64().await?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_i32().await?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = ColumnCryptoMetaData::stream_from_in_protocol(i_prot).await?;
+          f_8 = Some(val);
+        },
+        9 => {
+          let val = i_prot.read_bytes().await?;
+          f_9 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("ColumnChunk.file_offset", &f_2)?;
+    let ret = ColumnChunk {
+      file_path: f_1,
+      file_offset: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      meta_data: f_3,
+      offset_index_offset: f_4,
+      offset_index_length: f_5,
+      column_index_offset: f_6,
+      column_index_length: f_7,
+      crypto_metadata: f_8,
+      encrypted_column_metadata: f_9,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // RowGroup
 //
@@ -6514,161 +7185,16 @@ impl RowGroup {
       ordinal: ordinal.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<RowGroup> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Vec<ColumnChunk>> = None;
-    let mut f_2: Option<i64> = None;
-    let mut f_3: Option<i64> = None;
-    let mut f_4: Option<Vec<SortingColumn>> = None;
-    let mut f_5: Option<i64> = None;
-    let mut f_6: Option<i64> = None;
-    let mut f_7: Option<i16> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<ColumnChunk> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_10 = ColumnChunk::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_10);
-          }
-          i_prot.read_list_end()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i64()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i64()?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<SortingColumn> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_11 = SortingColumn::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_11);
-          }
-          i_prot.read_list_end()?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i64()?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_i64()?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_i16()?;
-          f_7 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("RowGroup.columns", &f_1)?;
-    verify_required_field_exists("RowGroup.total_byte_size", &f_2)?;
-    verify_required_field_exists("RowGroup.num_rows", &f_3)?;
-    let ret = RowGroup {
-      columns: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      total_byte_size: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      sorting_columns: f_4,
-      file_offset: f_5,
-      total_compressed_size: f_6,
-      ordinal: f_7,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<RowGroup> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Vec<ColumnChunk>> = None;
-    let mut f_2: Option<i64> = None;
-    let mut f_3: Option<i64> = None;
-    let mut f_4: Option<Vec<SortingColumn>> = None;
-    let mut f_5: Option<i64> = None;
-    let mut f_6: Option<i64> = None;
-    let mut f_7: Option<i16> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<ColumnChunk> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_12 = ColumnChunk::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_12);
-          }
-          i_prot.read_list_end().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_i64().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i64().await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<SortingColumn> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_13 = SortingColumn::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_13);
-          }
-          i_prot.read_list_end().await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let val = i_prot.read_i64().await?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_i64().await?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let val = i_prot.read_i16().await?;
-          f_7 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("RowGroup.columns", &f_1)?;
-    verify_required_field_exists("RowGroup.total_byte_size", &f_2)?;
-    verify_required_field_exists("RowGroup.num_rows", &f_3)?;
-    let ret = RowGroup {
-      columns: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      total_byte_size: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      sorting_columns: f_4,
-      file_offset: f_5,
-      total_compressed_size: f_6,
-      ordinal: f_7,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("RowGroup");
@@ -6762,6 +7288,144 @@ impl RowGroup {
   }
 }
 
+impl ReadThrift for RowGroup {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<RowGroup> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Vec<ColumnChunk>> = None;
+    let mut f_2: Option<i64> = None;
+    let mut f_3: Option<i64> = None;
+    let mut f_4: Option<Vec<SortingColumn>> = None;
+    let mut f_5: Option<i64> = None;
+    let mut f_6: Option<i64> = None;
+    let mut f_7: Option<i16> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_list()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i64()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i64()?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_list()?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i64()?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_i64()?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_i16()?;
+          f_7 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("RowGroup.columns", &f_1)?;
+    verify_required_field_exists("RowGroup.total_byte_size", &f_2)?;
+    verify_required_field_exists("RowGroup.num_rows", &f_3)?;
+    let ret = RowGroup {
+      columns: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      total_byte_size: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      sorting_columns: f_4,
+      file_offset: f_5,
+      total_compressed_size: f_6,
+      ordinal: f_7,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for RowGroup {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<RowGroup> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Vec<ColumnChunk>> = None;
+    let mut f_2: Option<i64> = None;
+    let mut f_3: Option<i64> = None;
+    let mut f_4: Option<Vec<SortingColumn>> = None;
+    let mut f_5: Option<i64> = None;
+    let mut f_6: Option<i64> = None;
+    let mut f_7: Option<i16> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_list().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_i64().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i64().await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_list().await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_i64().await?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_i64().await?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_i16().await?;
+          f_7 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("RowGroup.columns", &f_1)?;
+    verify_required_field_exists("RowGroup.total_byte_size", &f_2)?;
+    verify_required_field_exists("RowGroup.num_rows", &f_3)?;
+    let ret = RowGroup {
+      columns: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      total_byte_size: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      sorting_columns: f_4,
+      file_offset: f_5,
+      total_compressed_size: f_6,
+      ordinal: f_7,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // TypeDefinedOrder
 //
@@ -6775,37 +7439,16 @@ impl TypeDefinedOrder {
   pub fn new() -> TypeDefinedOrder {
     TypeDefinedOrder {}
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<TypeDefinedOrder> {
-    i_prot.read_struct_begin()?;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type)?;
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = TypeDefinedOrder {};
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TypeDefinedOrder> {
-    i_prot.read_struct_begin().await?;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let _ = field_id(&field_ident)?;
-      i_prot.skip(field_ident.field_type).await?;
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = TypeDefinedOrder {};
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("TypeDefinedOrder");
@@ -6825,6 +7468,44 @@ impl TypeDefinedOrder {
   }
 }
 
+impl ReadThrift for TypeDefinedOrder {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<TypeDefinedOrder> {
+    i_prot.read_struct_begin()?;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type)?;
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = TypeDefinedOrder {};
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for TypeDefinedOrder {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<TypeDefinedOrder> {
+    i_prot.read_struct_begin().await?;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let _ = field_id(&field_ident)?;
+      i_prot.skip(field_ident.field_type).await?;
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = TypeDefinedOrder {};
+    Ok(ret)
+  }
+}
+
 //
 // ColumnOrder
 //
@@ -6835,7 +7516,49 @@ pub enum ColumnOrder {
 }
 
 impl ColumnOrder {
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnOrder> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnOrder> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("ColumnOrder");
+    let mut written = o_prot.write_struct_begin(&struct_ident)?;
+    match *self {
+      ColumnOrder::TYPEORDER(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("TYPE_ORDER", TType::Struct, 1))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("ColumnOrder");
+    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
+    match *self {
+      ColumnOrder::TYPEORDER(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("TYPE_ORDER", TType::Struct, 1)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for ColumnOrder {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnOrder> {
     let mut ret: Option<ColumnOrder> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin()?;
@@ -6888,8 +7611,12 @@ impl ColumnOrder {
       ))
     }
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnOrder> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for ColumnOrder {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnOrder> {
     let mut ret: Option<ColumnOrder> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin().await?;
@@ -6942,35 +7669,6 @@ impl ColumnOrder {
       ))
     }
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("ColumnOrder");
-    let mut written = o_prot.write_struct_begin(&struct_ident)?;
-    match *self {
-      ColumnOrder::TYPEORDER(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("TYPE_ORDER", TType::Struct, 1))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("ColumnOrder");
-    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
-    match *self {
-      ColumnOrder::TYPEORDER(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("TYPE_ORDER", TType::Struct, 1)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -6997,7 +7695,55 @@ impl PageLocation {
       first_row_index,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<PageLocation> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageLocation> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("PageLocation");
+    written += o_prot.write_struct_begin(&struct_ident)?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("offset", TType::I64, 1))?;
+    written += o_prot.write_i64(self.offset)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("compressed_page_size", TType::I32, 2))?;
+    written += o_prot.write_i32(self.compressed_page_size)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("first_row_index", TType::I64, 3))?;
+    written += o_prot.write_i64(self.first_row_index)?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let mut written = 0;
+    let struct_ident = TStructIdentifier::new("PageLocation");
+    written += o_prot.write_struct_begin(&struct_ident).await?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("offset", TType::I64, 1)).await?;
+    written += o_prot.write_i64(self.offset).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("compressed_page_size", TType::I32, 2)).await?;
+    written += o_prot.write_i32(self.compressed_page_size).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_begin(&TFieldIdentifier::new("first_row_index", TType::I64, 3)).await?;
+    written += o_prot.write_i64(self.first_row_index).await?;
+    written += o_prot.write_field_end()?;
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for PageLocation {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<PageLocation> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<i64> = None;
     let mut f_2: Option<i32> = None;
@@ -7038,8 +7784,12 @@ impl PageLocation {
     };
     Ok(ret)
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageLocation> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for PageLocation {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<PageLocation> {
     i_prot.read_struct_begin().await?;
     let mut f_1: Option<i64> = None;
     let mut f_2: Option<i32> = None;
@@ -7080,41 +7830,6 @@ impl PageLocation {
     };
     Ok(ret)
   }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("PageLocation");
-    written += o_prot.write_struct_begin(&struct_ident)?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("offset", TType::I64, 1))?;
-    written += o_prot.write_i64(self.offset)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("compressed_page_size", TType::I32, 2))?;
-    written += o_prot.write_i32(self.compressed_page_size)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("first_row_index", TType::I64, 3))?;
-    written += o_prot.write_i64(self.first_row_index)?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let mut written = 0;
-    let struct_ident = TStructIdentifier::new("PageLocation");
-    written += o_prot.write_struct_begin(&struct_ident).await?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("offset", TType::I64, 1)).await?;
-    written += o_prot.write_i64(self.offset).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("compressed_page_size", TType::I32, 2)).await?;
-    written += o_prot.write_i32(self.compressed_page_size).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_begin(&TFieldIdentifier::new("first_row_index", TType::I64, 3)).await?;
-    written += o_prot.write_i64(self.first_row_index).await?;
-    written += o_prot.write_field_end()?;
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
 }
 
 //
@@ -7134,73 +7849,16 @@ impl OffsetIndex {
       page_locations,
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<OffsetIndex> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Vec<PageLocation>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<PageLocation> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_14 = PageLocation::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_14);
-          }
-          i_prot.read_list_end()?;
-          f_1 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("OffsetIndex.page_locations", &f_1)?;
-    let ret = OffsetIndex {
-      page_locations: f_1.expect("auto-generated code should have checked for presence of required fields"),
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<OffsetIndex> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Vec<PageLocation>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<PageLocation> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_15 = PageLocation::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_15);
-          }
-          i_prot.read_list_end().await?;
-          f_1 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("OffsetIndex.page_locations", &f_1)?;
-    let ret = OffsetIndex {
-      page_locations: f_1.expect("auto-generated code should have checked for presence of required fields"),
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("OffsetIndex");
@@ -7231,6 +7889,68 @@ impl OffsetIndex {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for OffsetIndex {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<OffsetIndex> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Vec<PageLocation>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_list()?;
+          f_1 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("OffsetIndex.page_locations", &f_1)?;
+    let ret = OffsetIndex {
+      page_locations: f_1.expect("auto-generated code should have checked for presence of required fields"),
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for OffsetIndex {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<OffsetIndex> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Vec<PageLocation>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_list().await?;
+          f_1 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("OffsetIndex.page_locations", &f_1)?;
+    let ret = OffsetIndex {
+      page_locations: f_1.expect("auto-generated code should have checked for presence of required fields"),
+    };
+    Ok(ret)
   }
 }
 
@@ -7277,163 +7997,16 @@ impl ColumnIndex {
       null_counts: null_counts.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnIndex> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Vec<bool>> = None;
-    let mut f_2: Option<Vec<Vec<u8>>> = None;
-    let mut f_3: Option<Vec<Vec<u8>>> = None;
-    let mut f_4: Option<BoundaryOrder> = None;
-    let mut f_5: Option<Vec<i64>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<bool> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_16 = i_prot.read_bool()?;
-            val.push(list_elem_16);
-          }
-          i_prot.read_list_end()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<Vec<u8>> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_17 = i_prot.read_bytes()?;
-            val.push(list_elem_17);
-          }
-          i_prot.read_list_end()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<Vec<u8>> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_18 = i_prot.read_bytes()?;
-            val.push(list_elem_18);
-          }
-          i_prot.read_list_end()?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = BoundaryOrder::read_from_in_protocol(i_prot)?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<i64> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_19 = i_prot.read_i64()?;
-            val.push(list_elem_19);
-          }
-          i_prot.read_list_end()?;
-          f_5 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("ColumnIndex.null_pages", &f_1)?;
-    verify_required_field_exists("ColumnIndex.min_values", &f_2)?;
-    verify_required_field_exists("ColumnIndex.max_values", &f_3)?;
-    verify_required_field_exists("ColumnIndex.boundary_order", &f_4)?;
-    let ret = ColumnIndex {
-      null_pages: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      min_values: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      max_values: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      boundary_order: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      null_counts: f_5,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnIndex> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Vec<bool>> = None;
-    let mut f_2: Option<Vec<Vec<u8>>> = None;
-    let mut f_3: Option<Vec<Vec<u8>>> = None;
-    let mut f_4: Option<BoundaryOrder> = None;
-    let mut f_5: Option<Vec<i64>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<bool> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_20 = i_prot.read_bool().await?;
-            val.push(list_elem_20);
-          }
-          i_prot.read_list_end().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<Vec<u8>> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_21 = i_prot.read_bytes().await?;
-            val.push(list_elem_21);
-          }
-          i_prot.read_list_end().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<Vec<u8>> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_22 = i_prot.read_bytes().await?;
-            val.push(list_elem_22);
-          }
-          i_prot.read_list_end().await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let val = BoundaryOrder::stream_from_in_protocol(i_prot).await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<i64> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_23 = i_prot.read_i64().await?;
-            val.push(list_elem_23);
-          }
-          i_prot.read_list_end().await?;
-          f_5 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("ColumnIndex.null_pages", &f_1)?;
-    verify_required_field_exists("ColumnIndex.min_values", &f_2)?;
-    verify_required_field_exists("ColumnIndex.max_values", &f_3)?;
-    verify_required_field_exists("ColumnIndex.boundary_order", &f_4)?;
-    let ret = ColumnIndex {
-      null_pages: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      min_values: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      max_values: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      boundary_order: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      null_counts: f_5,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("ColumnIndex");
@@ -7519,6 +8092,122 @@ impl ColumnIndex {
   }
 }
 
+impl ReadThrift for ColumnIndex {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<ColumnIndex> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Vec<bool>> = None;
+    let mut f_2: Option<Vec<Vec<u8>>> = None;
+    let mut f_3: Option<Vec<Vec<u8>>> = None;
+    let mut f_4: Option<BoundaryOrder> = None;
+    let mut f_5: Option<Vec<i64>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_list()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_list()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_list()?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = BoundaryOrder::read_from_in_protocol(i_prot)?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_list()?;
+          f_5 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("ColumnIndex.null_pages", &f_1)?;
+    verify_required_field_exists("ColumnIndex.min_values", &f_2)?;
+    verify_required_field_exists("ColumnIndex.max_values", &f_3)?;
+    verify_required_field_exists("ColumnIndex.boundary_order", &f_4)?;
+    let ret = ColumnIndex {
+      null_pages: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      min_values: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      max_values: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      boundary_order: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      null_counts: f_5,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for ColumnIndex {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<ColumnIndex> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Vec<bool>> = None;
+    let mut f_2: Option<Vec<Vec<u8>>> = None;
+    let mut f_3: Option<Vec<Vec<u8>>> = None;
+    let mut f_4: Option<BoundaryOrder> = None;
+    let mut f_5: Option<Vec<i64>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_list().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_list().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_list().await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = BoundaryOrder::stream_from_in_protocol(i_prot).await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_list().await?;
+          f_5 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("ColumnIndex.null_pages", &f_1)?;
+    verify_required_field_exists("ColumnIndex.min_values", &f_2)?;
+    verify_required_field_exists("ColumnIndex.max_values", &f_3)?;
+    verify_required_field_exists("ColumnIndex.boundary_order", &f_4)?;
+    let ret = ColumnIndex {
+      null_pages: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      min_values: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      max_values: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      boundary_order: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      null_counts: f_5,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // AesGcmV1
 //
@@ -7542,83 +8231,16 @@ impl AesGcmV1 {
       supply_aad_prefix: supply_aad_prefix.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmV1> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Vec<u8>> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    let mut f_3: Option<bool> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_bytes()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_bool()?;
-          f_3 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = AesGcmV1 {
-      aad_prefix: f_1,
-      aad_file_unique: f_2,
-      supply_aad_prefix: f_3,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmV1> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Vec<u8>> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    let mut f_3: Option<bool> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_bytes().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_bool().await?;
-          f_3 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = AesGcmV1 {
-      aad_prefix: f_1,
-      aad_file_unique: f_2,
-      supply_aad_prefix: f_3,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("AesGcmV1");
@@ -7665,6 +8287,90 @@ impl AesGcmV1 {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for AesGcmV1 {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmV1> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Vec<u8>> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    let mut f_3: Option<bool> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_bytes()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_bool()?;
+          f_3 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = AesGcmV1 {
+      aad_prefix: f_1,
+      aad_file_unique: f_2,
+      supply_aad_prefix: f_3,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for AesGcmV1 {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmV1> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Vec<u8>> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    let mut f_3: Option<bool> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_bytes().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_bool().await?;
+          f_3 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = AesGcmV1 {
+      aad_prefix: f_1,
+      aad_file_unique: f_2,
+      supply_aad_prefix: f_3,
+    };
+    Ok(ret)
   }
 }
 
@@ -7691,83 +8397,16 @@ impl AesGcmCtrV1 {
       supply_aad_prefix: supply_aad_prefix.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmCtrV1> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<Vec<u8>> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    let mut f_3: Option<bool> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_bytes()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_bool()?;
-          f_3 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    let ret = AesGcmCtrV1 {
-      aad_prefix: f_1,
-      aad_file_unique: f_2,
-      supply_aad_prefix: f_3,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmCtrV1> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<Vec<u8>> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    let mut f_3: Option<bool> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_bytes().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_bool().await?;
-          f_3 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    let ret = AesGcmCtrV1 {
-      aad_prefix: f_1,
-      aad_file_unique: f_2,
-      supply_aad_prefix: f_3,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("AesGcmCtrV1");
@@ -7817,6 +8456,90 @@ impl AesGcmCtrV1 {
   }
 }
 
+impl ReadThrift for AesGcmCtrV1 {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmCtrV1> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<Vec<u8>> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    let mut f_3: Option<bool> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_bytes()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_bool()?;
+          f_3 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    let ret = AesGcmCtrV1 {
+      aad_prefix: f_1,
+      aad_file_unique: f_2,
+      supply_aad_prefix: f_3,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for AesGcmCtrV1 {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<AesGcmCtrV1> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<Vec<u8>> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    let mut f_3: Option<bool> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_bytes().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_bool().await?;
+          f_3 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    let ret = AesGcmCtrV1 {
+      aad_prefix: f_1,
+      aad_file_unique: f_2,
+      supply_aad_prefix: f_3,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // EncryptionAlgorithm
 //
@@ -7828,7 +8551,59 @@ pub enum EncryptionAlgorithm {
 }
 
 impl EncryptionAlgorithm {
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionAlgorithm> {
+    ReadThrift::read_from_in_protocol(i_prot)
+  }
+
+  #[cfg(feature = "async")]
+  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionAlgorithm> {
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
+  }
+
+  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("EncryptionAlgorithm");
+    let mut written = o_prot.write_struct_begin(&struct_ident)?;
+    match *self {
+      EncryptionAlgorithm::AESGCMV1(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("AES_GCM_V1", TType::Struct, 1))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+      EncryptionAlgorithm::AESGCMCTRV1(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("AES_GCM_CTR_V1", TType::Struct, 2))?;
+        written += f.write_to_out_protocol(o_prot)?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop()?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+  #[cfg(feature = "async")]
+  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
+    let struct_ident = TStructIdentifier::new("EncryptionAlgorithm");
+    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
+    match *self {
+      EncryptionAlgorithm::AESGCMV1(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("AES_GCM_V1", TType::Struct, 1)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+      EncryptionAlgorithm::AESGCMCTRV1(ref f) => {
+        written += o_prot.write_field_begin(&TFieldIdentifier::new("AES_GCM_CTR_V1", TType::Struct, 2)).await?;
+        written += f.write_to_out_stream_protocol(o_prot).await?;
+        written += o_prot.write_field_end()?;
+      },
+    }
+    written += o_prot.write_field_stop().await?;
+    written += o_prot.write_struct_end()?;
+    Ok(written)
+  }
+}
+
+impl ReadThrift for EncryptionAlgorithm {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionAlgorithm> {
     let mut ret: Option<EncryptionAlgorithm> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin()?;
@@ -7888,8 +8663,12 @@ impl EncryptionAlgorithm {
       ))
     }
   }
-  #[cfg(feature = "async")]
-  pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionAlgorithm> {
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for EncryptionAlgorithm {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<EncryptionAlgorithm> {
     let mut ret: Option<EncryptionAlgorithm> = None;
     let mut received_field_count = 0;
     i_prot.read_struct_begin().await?;
@@ -7948,45 +8727,6 @@ impl EncryptionAlgorithm {
         )
       ))
     }
-  }
-  pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("EncryptionAlgorithm");
-    let mut written = o_prot.write_struct_begin(&struct_ident)?;
-    match *self {
-      EncryptionAlgorithm::AESGCMV1(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("AES_GCM_V1", TType::Struct, 1))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-      EncryptionAlgorithm::AESGCMCTRV1(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("AES_GCM_CTR_V1", TType::Struct, 2))?;
-        written += f.write_to_out_protocol(o_prot)?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop()?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
-  }
-  #[cfg(feature = "async")]
-  pub async fn write_to_out_stream_protocol<T: TOutputStreamProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
-    let struct_ident = TStructIdentifier::new("EncryptionAlgorithm");
-    let mut written = o_prot.write_struct_begin(&struct_ident).await?;
-    match *self {
-      EncryptionAlgorithm::AESGCMV1(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("AES_GCM_V1", TType::Struct, 1)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-      EncryptionAlgorithm::AESGCMCTRV1(ref f) => {
-        written += o_prot.write_field_begin(&TFieldIdentifier::new("AES_GCM_CTR_V1", TType::Struct, 2)).await?;
-        written += f.write_to_out_stream_protocol(o_prot).await?;
-        written += o_prot.write_field_end()?;
-      },
-    }
-    written += o_prot.write_field_stop().await?;
-    written += o_prot.write_struct_end()?;
-    Ok(written)
   }
 }
 
@@ -8055,211 +8795,16 @@ impl FileMetaData {
       footer_signing_key_metadata: footer_signing_key_metadata.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<FileMetaData> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<i32> = None;
-    let mut f_2: Option<Vec<SchemaElement>> = None;
-    let mut f_3: Option<i64> = None;
-    let mut f_4: Option<Vec<RowGroup>> = None;
-    let mut f_5: Option<Vec<KeyValue>> = None;
-    let mut f_6: Option<String> = None;
-    let mut f_7: Option<Vec<ColumnOrder>> = None;
-    let mut f_8: Option<EncryptionAlgorithm> = None;
-    let mut f_9: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_i32()?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<SchemaElement> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_24 = SchemaElement::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_24);
-          }
-          i_prot.read_list_end()?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i64()?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<RowGroup> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_25 = RowGroup::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_25);
-          }
-          i_prot.read_list_end()?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<KeyValue> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_26 = KeyValue::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_26);
-          }
-          i_prot.read_list_end()?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_string()?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let list_ident = i_prot.read_list_begin()?;
-          let mut val: Vec<ColumnOrder> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_27 = ColumnOrder::read_from_in_protocol(i_prot)?;
-            val.push(list_elem_27);
-          }
-          i_prot.read_list_end()?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = EncryptionAlgorithm::read_from_in_protocol(i_prot)?;
-          f_8 = Some(val);
-        },
-        9 => {
-          let val = i_prot.read_bytes()?;
-          f_9 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("FileMetaData.version", &f_1)?;
-    verify_required_field_exists("FileMetaData.schema", &f_2)?;
-    verify_required_field_exists("FileMetaData.num_rows", &f_3)?;
-    verify_required_field_exists("FileMetaData.row_groups", &f_4)?;
-    let ret = FileMetaData {
-      version: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      schema: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      row_groups: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      key_value_metadata: f_5,
-      created_by: f_6,
-      column_orders: f_7,
-      encryption_algorithm: f_8,
-      footer_signing_key_metadata: f_9,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FileMetaData> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<i32> = None;
-    let mut f_2: Option<Vec<SchemaElement>> = None;
-    let mut f_3: Option<i64> = None;
-    let mut f_4: Option<Vec<RowGroup>> = None;
-    let mut f_5: Option<Vec<KeyValue>> = None;
-    let mut f_6: Option<String> = None;
-    let mut f_7: Option<Vec<ColumnOrder>> = None;
-    let mut f_8: Option<EncryptionAlgorithm> = None;
-    let mut f_9: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = i_prot.read_i32().await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<SchemaElement> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_28 = SchemaElement::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_28);
-          }
-          i_prot.read_list_end().await?;
-          f_2 = Some(val);
-        },
-        3 => {
-          let val = i_prot.read_i64().await?;
-          f_3 = Some(val);
-        },
-        4 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<RowGroup> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_29 = RowGroup::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_29);
-          }
-          i_prot.read_list_end().await?;
-          f_4 = Some(val);
-        },
-        5 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<KeyValue> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_30 = KeyValue::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_30);
-          }
-          i_prot.read_list_end().await?;
-          f_5 = Some(val);
-        },
-        6 => {
-          let val = i_prot.read_string().await?;
-          f_6 = Some(val);
-        },
-        7 => {
-          let list_ident = i_prot.read_list_begin().await?;
-          let mut val: Vec<ColumnOrder> = Vec::with_capacity(list_ident.size as usize);
-          for _ in 0..list_ident.size {
-            let list_elem_31 = ColumnOrder::stream_from_in_protocol(i_prot).await?;
-            val.push(list_elem_31);
-          }
-          i_prot.read_list_end().await?;
-          f_7 = Some(val);
-        },
-        8 => {
-          let val = EncryptionAlgorithm::stream_from_in_protocol(i_prot).await?;
-          f_8 = Some(val);
-        },
-        9 => {
-          let val = i_prot.read_bytes().await?;
-          f_9 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("FileMetaData.version", &f_1)?;
-    verify_required_field_exists("FileMetaData.schema", &f_2)?;
-    verify_required_field_exists("FileMetaData.num_rows", &f_3)?;
-    verify_required_field_exists("FileMetaData.row_groups", &f_4)?;
-    let ret = FileMetaData {
-      version: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      schema: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
-      row_groups: f_4.expect("auto-generated code should have checked for presence of required fields"),
-      key_value_metadata: f_5,
-      created_by: f_6,
-      column_orders: f_7,
-      encryption_algorithm: f_8,
-      footer_signing_key_metadata: f_9,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("FileMetaData");
@@ -8385,6 +8930,170 @@ impl FileMetaData {
   }
 }
 
+impl ReadThrift for FileMetaData {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<FileMetaData> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<i32> = None;
+    let mut f_2: Option<Vec<SchemaElement>> = None;
+    let mut f_3: Option<i64> = None;
+    let mut f_4: Option<Vec<RowGroup>> = None;
+    let mut f_5: Option<Vec<KeyValue>> = None;
+    let mut f_6: Option<String> = None;
+    let mut f_7: Option<Vec<ColumnOrder>> = None;
+    let mut f_8: Option<EncryptionAlgorithm> = None;
+    let mut f_9: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_i32()?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_list()?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i64()?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_list()?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_list()?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_string()?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_list()?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = EncryptionAlgorithm::read_from_in_protocol(i_prot)?;
+          f_8 = Some(val);
+        },
+        9 => {
+          let val = i_prot.read_bytes()?;
+          f_9 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("FileMetaData.version", &f_1)?;
+    verify_required_field_exists("FileMetaData.schema", &f_2)?;
+    verify_required_field_exists("FileMetaData.num_rows", &f_3)?;
+    verify_required_field_exists("FileMetaData.row_groups", &f_4)?;
+    let ret = FileMetaData {
+      version: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      schema: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      row_groups: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      key_value_metadata: f_5,
+      created_by: f_6,
+      column_orders: f_7,
+      encryption_algorithm: f_8,
+      footer_signing_key_metadata: f_9,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for FileMetaData {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FileMetaData> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<i32> = None;
+    let mut f_2: Option<Vec<SchemaElement>> = None;
+    let mut f_3: Option<i64> = None;
+    let mut f_4: Option<Vec<RowGroup>> = None;
+    let mut f_5: Option<Vec<KeyValue>> = None;
+    let mut f_6: Option<String> = None;
+    let mut f_7: Option<Vec<ColumnOrder>> = None;
+    let mut f_8: Option<EncryptionAlgorithm> = None;
+    let mut f_9: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = i_prot.read_i32().await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_list().await?;
+          f_2 = Some(val);
+        },
+        3 => {
+          let val = i_prot.read_i64().await?;
+          f_3 = Some(val);
+        },
+        4 => {
+          let val = i_prot.read_list().await?;
+          f_4 = Some(val);
+        },
+        5 => {
+          let val = i_prot.read_list().await?;
+          f_5 = Some(val);
+        },
+        6 => {
+          let val = i_prot.read_string().await?;
+          f_6 = Some(val);
+        },
+        7 => {
+          let val = i_prot.read_list().await?;
+          f_7 = Some(val);
+        },
+        8 => {
+          let val = EncryptionAlgorithm::stream_from_in_protocol(i_prot).await?;
+          f_8 = Some(val);
+        },
+        9 => {
+          let val = i_prot.read_bytes().await?;
+          f_9 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("FileMetaData.version", &f_1)?;
+    verify_required_field_exists("FileMetaData.schema", &f_2)?;
+    verify_required_field_exists("FileMetaData.num_rows", &f_3)?;
+    verify_required_field_exists("FileMetaData.row_groups", &f_4)?;
+    let ret = FileMetaData {
+      version: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      schema: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      num_rows: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      row_groups: f_4.expect("auto-generated code should have checked for presence of required fields"),
+      key_value_metadata: f_5,
+      created_by: f_6,
+      column_orders: f_7,
+      encryption_algorithm: f_8,
+      footer_signing_key_metadata: f_9,
+    };
+    Ok(ret)
+  }
+}
+
 //
 // FileCryptoMetaData
 //
@@ -8408,73 +9117,16 @@ impl FileCryptoMetaData {
       key_metadata: key_metadata.into(),
     }
   }
+
   pub fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<FileCryptoMetaData> {
-    i_prot.read_struct_begin()?;
-    let mut f_1: Option<EncryptionAlgorithm> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin()?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = EncryptionAlgorithm::read_from_in_protocol(i_prot)?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes()?;
-          f_2 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type)?;
-        },
-      };
-      i_prot.read_field_end()?;
-    }
-    i_prot.read_struct_end()?;
-    verify_required_field_exists("FileCryptoMetaData.encryption_algorithm", &f_1)?;
-    let ret = FileCryptoMetaData {
-      encryption_algorithm: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      key_metadata: f_2,
-    };
-    Ok(ret)
+    ReadThrift::read_from_in_protocol(i_prot)
   }
+
   #[cfg(feature = "async")]
   pub async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FileCryptoMetaData> {
-    i_prot.read_struct_begin().await?;
-    let mut f_1: Option<EncryptionAlgorithm> = None;
-    let mut f_2: Option<Vec<u8>> = None;
-    loop {
-      let field_ident = i_prot.read_field_begin().await?;
-      if field_ident.field_type == TType::Stop {
-        break;
-      }
-      let field_id = field_id(&field_ident)?;
-      match field_id {
-        1 => {
-          let val = EncryptionAlgorithm::stream_from_in_protocol(i_prot).await?;
-          f_1 = Some(val);
-        },
-        2 => {
-          let val = i_prot.read_bytes().await?;
-          f_2 = Some(val);
-        },
-        _ => {
-          i_prot.skip(field_ident.field_type).await?;
-        },
-      };
-      i_prot.read_field_end().await?;
-    }
-    i_prot.read_struct_end().await?;
-    verify_required_field_exists("FileCryptoMetaData.encryption_algorithm", &f_1)?;
-    let ret = FileCryptoMetaData {
-      encryption_algorithm: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      key_metadata: f_2,
-    };
-    Ok(ret)
+    AsyncReadThrift::stream_from_in_protocol(i_prot).await
   }
+
   pub fn write_to_out_protocol<T: TOutputProtocol>(&self, o_prot: &mut T) -> thrift::Result<usize> {
     let mut written = 0;
     let struct_ident = TStructIdentifier::new("FileCryptoMetaData");
@@ -8507,6 +9159,80 @@ impl FileCryptoMetaData {
     written += o_prot.write_field_stop().await?;
     written += o_prot.write_struct_end()?;
     Ok(written)
+  }
+}
+
+impl ReadThrift for FileCryptoMetaData {
+  fn read_from_in_protocol<T: TInputProtocol>(i_prot: &mut T) -> thrift::Result<FileCryptoMetaData> {
+    i_prot.read_struct_begin()?;
+    let mut f_1: Option<EncryptionAlgorithm> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin()?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = EncryptionAlgorithm::read_from_in_protocol(i_prot)?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes()?;
+          f_2 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type)?;
+        },
+      };
+      i_prot.read_field_end()?;
+    }
+    i_prot.read_struct_end()?;
+    verify_required_field_exists("FileCryptoMetaData.encryption_algorithm", &f_1)?;
+    let ret = FileCryptoMetaData {
+      encryption_algorithm: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      key_metadata: f_2,
+    };
+    Ok(ret)
+  }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncReadThrift for FileCryptoMetaData {
+  async fn stream_from_in_protocol<T: TInputStreamProtocol>(i_prot: &mut T) -> thrift::Result<FileCryptoMetaData> {
+    i_prot.read_struct_begin().await?;
+    let mut f_1: Option<EncryptionAlgorithm> = None;
+    let mut f_2: Option<Vec<u8>> = None;
+    loop {
+      let field_ident = i_prot.read_field_begin().await?;
+      if field_ident.field_type == TType::Stop {
+        break;
+      }
+      let field_id = field_id(&field_ident)?;
+      match field_id {
+        1 => {
+          let val = EncryptionAlgorithm::stream_from_in_protocol(i_prot).await?;
+          f_1 = Some(val);
+        },
+        2 => {
+          let val = i_prot.read_bytes().await?;
+          f_2 = Some(val);
+        },
+        _ => {
+          i_prot.skip(field_ident.field_type).await?;
+        },
+      };
+      i_prot.read_field_end().await?;
+    }
+    i_prot.read_struct_end().await?;
+    verify_required_field_exists("FileCryptoMetaData.encryption_algorithm", &f_1)?;
+    let ret = FileCryptoMetaData {
+      encryption_algorithm: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      key_metadata: f_2,
+    };
+    Ok(ret)
   }
 }
 
