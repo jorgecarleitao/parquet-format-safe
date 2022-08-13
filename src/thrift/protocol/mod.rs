@@ -30,42 +30,24 @@ mod compact_write;
 pub use compact_write::TCompactOutputProtocol;
 
 #[cfg(feature = "async")]
-#[cfg_attr(
-    docsrs,
-    doc(cfg(any(feature = "async_futures", feature = "async_tokio")))
-)]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
 mod stream;
 #[cfg(feature = "async")]
-#[cfg_attr(
-    docsrs,
-    doc(cfg(any(feature = "async_futures", feature = "async_tokio")))
-)]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
 pub use stream::{AsyncReadThrift, TInputStreamProtocol, TOutputStreamProtocol};
 
 #[cfg(feature = "async")]
-#[cfg_attr(
-    docsrs,
-    doc(cfg(any(feature = "async_futures", feature = "async_tokio")))
-)]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
 mod compact_stream;
 #[cfg(feature = "async")]
-#[cfg_attr(
-    docsrs,
-    doc(cfg(any(feature = "async_futures", feature = "async_tokio")))
-)]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
 pub use compact_stream::TCompactInputStreamProtocol;
 
 #[cfg(feature = "async")]
-#[cfg_attr(
-    docsrs,
-    doc(cfg(any(feature = "async_futures", feature = "async_tokio")))
-)]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
 mod compact_stream_write;
 #[cfg(feature = "async")]
-#[cfg_attr(
-    docsrs,
-    doc(cfg(any(feature = "async_futures", feature = "async_tokio")))
-)]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
 pub use compact_stream_write::TCompactOutputStreamProtocol;
 
 // Default maximum depth to which `TInputProtocol::skip` will skip a Thrift
