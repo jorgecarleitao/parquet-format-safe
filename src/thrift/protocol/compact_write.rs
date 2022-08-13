@@ -2,7 +2,7 @@ use std::convert::From;
 use std::convert::TryInto;
 use std::io::Write;
 
-use integer_encoding::VarIntWriter;
+use super::super::varint::VarIntWriter;
 
 use super::super::Result;
 use super::{TFieldIdentifier, TListIdentifier, TMapIdentifier, TMessageIdentifier};

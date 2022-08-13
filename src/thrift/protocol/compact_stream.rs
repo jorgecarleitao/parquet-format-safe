@@ -1,9 +1,10 @@
 use std::convert::{From, TryFrom, TryInto};
-use std::io;
 
 use async_trait::async_trait;
-use futures::{AsyncRead, AsyncReadExt, AsyncSeek};
-use integer_encoding::VarIntAsyncReader;
+#[cfg(feature = "async")]
+use futures::io::{AsyncRead, AsyncReadExt};
+
+use super::super::varint::VarIntAsyncReader;
 
 use super::compact::{
     collection_u8_to_type, u8_to_type, COMPACT_PROTOCOL_ID, COMPACT_VERSION, COMPACT_VERSION_MASK,
@@ -300,18 +301,5 @@ impl<R: VarIntAsyncReader + AsyncRead + Unpin + Send> TInputStreamProtocol
             .await
             .map_err(From::from)
             .map(|_| buf[0])
-    }
-}
-
-impl<R> AsyncSeek for TCompactInputStreamProtocol<R>
-where
-    R: AsyncSeek + Unpin + Send,
-{
-    fn poll_seek(
-        mut self: std::pin::Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
-        pos: io::SeekFrom,
-    ) -> std::task::Poll<io::Result<u64>> {
-        std::pin::Pin::new(&mut self.reader).poll_seek(cx, pos)
     }
 }

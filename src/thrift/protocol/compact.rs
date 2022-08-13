@@ -2,7 +2,7 @@ use std::convert::{From, TryFrom, TryInto};
 use std::io;
 use std::io::Read;
 
-use integer_encoding::VarIntReader;
+use super::super::varint::VarIntReader;
 
 use super::super::{Error, ProtocolError, ProtocolErrorKind, Result};
 use super::{

@@ -2,8 +2,10 @@ use std::convert::From;
 use std::convert::TryInto;
 
 use async_trait::async_trait;
-use futures::{AsyncWrite, AsyncWriteExt};
-use integer_encoding::VarIntAsyncWriter;
+#[cfg(feature = "async")]
+use futures::io::{AsyncWrite, AsyncWriteExt};
+
+use super::super::varint::VarIntAsyncWriter;
 
 use crate::thrift::Result;
 
