@@ -15,11 +15,13 @@ repository = "https://github.com/jorgecarleitao/parquet-format-safe"
 keywords = ["parquet", "thrift"]
 
 [dependencies]
-integer-encoding = { version = "3.0" }
 async-trait = {version = "0.1", optional = true}
 futures = {version = "0.3", optional = true}
+
+[dev-dependencies]
+tokio = {version = "1", features = ["rt", "macros"]}
 
 [features]
 default = []
 full = ["async"]
-async = ["futures", "async-trait", "integer-encoding/futures_async"]
+async = ["futures", "async-trait"]
