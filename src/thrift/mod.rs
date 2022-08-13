@@ -1,5 +1,5 @@
 pub mod protocol;
-mod varint;
+pub mod varint;
 
 mod errors;
 pub use errors::*;
