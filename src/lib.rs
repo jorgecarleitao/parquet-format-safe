@@ -1,5 +1,6 @@
 #![allow(non_camel_case_types)]
 #![forbid(unsafe_code)]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 mod parquet_format;
 pub use crate::parquet_format::*;
