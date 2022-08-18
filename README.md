@@ -12,5 +12,5 @@ See [parquet2](https://github.com/jorgecarleitao/parquet2) for such functionalit
 * the read API is panic free
 * the read API has a bound on the maximum number of possible bytes read, to avoid OOM.
 
-It must be used with the fork of thrift's compiler available
+The Rust generated code is done by a fork of thrift's compiler, available
 at https://github.com/jorgecarleitao/thrift/tree/safe .
