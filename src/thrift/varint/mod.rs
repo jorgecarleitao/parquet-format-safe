@@ -143,7 +143,7 @@ mod tests {
         let i1: u32 = 1;
         let i2: u32 = 65532;
         let i3: u32 = 4200123456;
-        let i4: i64 = i3i64 * 1000;
+        let i4: i64 = i3 as i64 * 1000;
         let i5: i32 = -32456;
 
         buf.write_varint_async(i1).await.unwrap();
